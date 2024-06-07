@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SPARQL Query Interface</title>
+</head>
+<body>
+    <h1>SPARQL Query Interface</h1>
+    <form method="post">
+        <label for="query">SPARQL Query:</label><br>
+        <textarea id="query" name="query" rows="10" cols="100">{{ query }}</textarea><br>
+        <input type="submit" value="Run Query">
+    </form>
+    <h2>Results</h2>
+    <h3>1st Node List for Subject</h3>
+    <p>{{ node_list_1st_s }}</p>
+    <h3>1st Node List for Object</h3>
+    <p>{{ node_list_1st_o }}</p>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Subject/Object</th>
+                <th>Path</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <!-- if result.key("s"): result.s.value -->
+                {% if o in result %}
+                <td>{{ result.o.value }}</td>
+                {% elif s in result %}
+                <td>{{ result.s.value }}</td>
+                {% endif %}
+                <td>{{ result.p.value }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
