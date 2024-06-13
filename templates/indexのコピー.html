@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SPARQL Query Interface</title>
+</head>
+<body>
+    <h1>SPARQL Query Interface</h1>
+    <!-- <form method="post"> -->
+    <form method="post">
+        <label for="query">SPARQL Query:</label><br>
+        <textarea id="query" name="query" rows="10" cols="100">{{ query }}</textarea><br>
+        <input type="submit" value="Run Query">
+    </form>
+    <!-- <table border="2">
+        <thead>
+            <tr>
+                <th>index</th>
+                <th>graph_name_list</th>
+            </tr>
+        </thead> -->
+        
+            <!-- {% for i in range(len(graph_name_list)) %} -->
+            <!-- {% for graph_name in graph_name_list %}
+        <tbody>
+            <tr>
+                <td>{{ loop.index0 }}</td>
+                <td>{{ graph_name_list }}</td>
+            </tr>
+        </tbody>
+            {% endfor %} -->
+    <!-- </table> -->
+
+    <h2>Graph_name_list</h2>
+    <p>{{ graph_name_list }}</p>
+
+    <h3>1st Node List for Subject</h3>
+    <p>{{ node_list_1st_s }}</p>
+    <h3>1st Node List for Object</h3>
+    <p>{{ node_list_1st_o }}</p>
+    <!-- <table border="1">
+        <thead>
+            <tr>
+                <th>Subject/Object</th>
+                <th>Path</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                {% if o in result %}
+                <td>{{ result.o.value }}</td>
+                {% elif s in result %}
+                <td>{{ result.s.value }}</td>
+                {% endif %}
+                <td>{{ result.p.value }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table> -->
+
+</body>
+</html>

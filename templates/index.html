@@ -11,32 +11,28 @@
         <textarea id="query" name="query" rows="10" cols="100">{{ query }}</textarea><br>
         <input type="submit" value="Run Query">
     </form>
-    <h2>Results</h2>
+
+
+    <h2>Graph_name_list</h2>
+    <p>{{ graph_name_list }}</p>
+    <!-- ['2022年の阪神タイガース', 'かとうれいこ', '原田伸郎', '向井寛', '田中次紀', 'ティーチングプロ', 'レッスンプロ', 'ティーチングプロ', 'レッスンプロ', 'ゴルフ', 'ゴルファー', 'プロフェッショナル', 'ゴルフ', 'ゴルファー', 'プロフェッショナル', 'ゴルフ', 'ゴルファー', 'プロフェッショナル', 'Q110011391', '1969年', '1951年の日本', 'Q11415883', 'Q108777099', 'せんだるか', '松本一誠', '大西翔太', '粕谷正美', 'クオリファイングトーナメント', '各国のゴルファー', 'スポーツ関連の職業', 'ゴルファー一覧', '日本プロゴルフ選手権大会', 'Reflist', 'ホールインワン', 'プロゴルファー', 'プロフェッショナル（英: professional）は、短縮形で「pro プロ」とも言うが、次のような意味がある。 まずは形容詞的用法が根底にあり、 \n* （元々の意味）「professionに関連する」あるいは「professionに属する」という意味である。なおprofessionとは、賃金を支払われるなりわい（＝職業）のことであるが、その中でもとくにトレーニングを要し何らかの資格を要するようななりわいを指す。つまりprofessionとは、一般に「専門的な仕事」と表現されるもののことである。 \n* 「職業的な人にふさわしい」という意味で、能力が高く、技に優れ、（その仕事に）確かさがある、ということ。 \n* （アマチュアとは異なって）「主たる収入を得るために特定の分野に従事している（人）」 名詞的用法としては、 \n* profession（＝「専門的な仕事」）に従事している人や、専門的な仕事で評価を得ている人。 \n* 特定の分野に従事している人で、その中でも特に、（「ひまつぶし」としてではなく）主たる収入を得る生業（なりわい）としてそれに従事している人。 \n* 特定の活動に関して能力が高く、技能に優れる人。 対義語はアマチュア（英：Amateur）。 professionalの類義語には「英: expert エキスパート」（熟練者）や、英: specialist スペシャリストがある。'] -->
+    <table border="1">
+        <tr>
+            <th>index</th>
+            <th>graph_name</th>
+        </tr>
+        {% for graph_name in graph_name_list %}
+        <tr>
+            <td>{{ loop.index0 }}</td>
+            <td>{{ graph_name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
     <h3>1st Node List for Subject</h3>
     <p>{{ node_list_1st_s }}</p>
     <h3>1st Node List for Object</h3>
     <p>{{ node_list_1st_o }}</p>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Subject/Object</th>
-                <th>Path</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for result in results %}
-            <tr>
-                <!-- if result.key("s"): result.s.value -->
-                {% if o in result %}
-                <td>{{ result.o.value }}</td>
-                {% elif s in result %}
-                <td>{{ result.s.value }}</td>
-                {% endif %}
-                <td>{{ result.p.value }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
 </body>
 </html>
