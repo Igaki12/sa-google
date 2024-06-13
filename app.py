@@ -37,7 +37,9 @@ weight_list = [{"weight" : 0.9 , "p" : "http://www.w3.org/1999/02/22-rdf-syntax-
 def index():
     query = SEARCH_WORD
     if request.method == 'POST':
-        # query = request.form['query']
+        # input check
+        while request.form['query'] == "" or len(request.form['query']) > 30 or re.compile(r"[!-/:-@[-`{-~]").search(request.form['query']):
+            print("error: invalid input")
         query = request.form['query']
 
     response_s1 = requests.get(SPARQL_ENDPOINT, params={
@@ -107,6 +109,7 @@ def index():
         else:
             return_results = [result for result in results if result["o"]["value"] not in graph_name_list]
             return return_results
+    
 
     
     if response_s1.status_code == 200:
@@ -161,29 +164,6 @@ def index():
                 node_list_2nd_o = []
 
 
-    # if results_s1 != [] and response_s1.status_code == 200:
-    #     for result in results_s1:
-    #         results_s2 = get_results_s2(result["s"]["value"],graph_name_list)
-    #         if results_s2 != []:
-    #             node_list_2nd_s = sorted([{"name" : result["s"] , "weight" : sum([1 + sum([(weight["weight"] - 1) for weight in weight_list if weight["p"] == p]) for p in result["p_list"]])} for result in [{"s" : result["s"]["value"] , "p_list" : [line["p"]["value"] for line in results_s1 if line["s"]["value"] == result["s"]["value"]]} for result in results_s2]], key=lambda x:x["weight"], reverse=True)
-    #             if len(node_list_2nd_s) > 1:
-    #                 node_list_2nd_s = node_list_2nd_s[:1]
-    #             for node in node_list_2nd_s:
-    #                 graph_name_list.append(node["name"])
-    #         else:
-    #             node_list_2nd_s = []
-    
-    # if results_o1 != [] and response_o1.status_code == 200:
-    #     for result in results_o1:
-    #         results_o2 = get_results_o2(result["o"]["value"],graph_name_list)
-    #         if results_o2 != []:
-    #             node_list_2nd_o = sorted([{"name" : result["o"] , "weight" : sum([1 + sum([(weight["weight"] - 1) for weight in weight_list if weight["p"] == p]) for p in result["p_list"]])} for result in [{"o" : result["o"]["value"] , "p_list" : [line["p"]["value"] for line in results_o1 if line["o"]["value"] == result["o"]["value"]]} for result in results_o2]], key=lambda x:x["weight"], reverse=True)
-    #             if len(node_list_2nd_o) > 1:
-    #                 node_list_2nd_o = node_list_2nd_o[:1]
-    #             for node in node_list_2nd_o:
-    #                 graph_name_list.append(node["name"])
-    #         else:
-    #             node_list_2nd_o = []
 
 
     
