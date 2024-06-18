@@ -1,21 +1,17 @@
-# Use the official Python image.
-# https://hub.docker.com/_/python
-FROM python:3.9
+# Python image to use.
+FROM python:3.12-alpine
 
 # Set the working directory to /app
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# copy the requirements file used for dependencies
+COPY requirements.txt .
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
-# Make port 8080 available to the world outside this container
-EXPOSE 8080
-
-# Define environment variable
-ENV NAME World
+# Copy the rest of the working directory contents into the container at /app
+COPY . .
 
 # Run app.py when the container launches
-CMD ["gunicorn", "-b", ":8080", "app:app"]
+ENTRYPOINT ["python", "app.py"]
