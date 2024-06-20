@@ -3,8 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <title>SPARQL Query Interface</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.20.0/cytoscape.min.js"></script>
+    <style>
+        #cy {
+            width: 100%;
+            height: 100vh;
+            display: block;
+        }
+    </style>
 </head>
 <body>
+    <!-- <div id="cy"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // var node_list_1st_o = {{ node_list_1st_o | safe }};
+            var graph_name_list = {{ graph_name_list | safe }};
+            var elements = nodes.map(function(node, index) {
+                return { data: { id: 'graph_name_list_' + index, label: node } };
+            });
+
+            var cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: elements,
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'background-color': '#666',
+                            'label': 'data(label)',
+                            'text-valign': 'center',
+                            'color': '#fff',
+                            'font-size': '10px'
+                        }
+                    }
+                ],
+                layout: {
+                    name: 'concentric',
+                    concentric: function(node) {
+                        return node.degree();
+                    },
+                    levelWidth: function(nodes) {
+                        return 2;
+                    },
+                    spacingFactor: 1.2
+                }
+            });
+        });
+    </script> -->
+
+
+
     <h1>SPARQL Query Interface</h1>
     <form method="post">
         <label for="query">SPARQL Query:</label><br>

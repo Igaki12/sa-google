@@ -2,13 +2,13 @@ import os
 import re
 # from tkinter import SE
 # from urllib import response
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request , redirect
 import requests
 
 app = Flask(__name__)
 
 SPARQL_ENDPOINT = "https://ja.dbpedia.org/sparql"
-SEARCH_WORD = "東京都"
+query = "東京都"
 
 weight_list = [{"weight" : 0.9 , "p" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" }, 
                {"weight" : 1 , "p" : "http://dbpedia.org/ontology/wikiPageWikiLink"} , 
@@ -29,14 +29,23 @@ weight_list = [{"weight" : 0.9 , "p" : "http://www.w3.org/1999/02/22-rdf-syntax-
             #    {"weight" : 0.1 , "p" : "http://xmlns.com/foaf/0.1/name"},
             #    {"weight" : 0.1 , "p" : "http://xmlns.com/foaf/0.1/name"},
             ]
-# @app.route('/', methods=['GET'])
-# def index():
-#         return render_template('index.html', query="東京都", results=[] , node_list_1st_s=[] , node_list_1st_o=[], graph_name_list=[])
+@app.route('/', methods=['GET' , 'POST'])
+def index(query=query):
+    if request.method == 'POST':
+        # input check
+        while request.form['query'] == "" or len(request.form['query']) > 30 or re.compile(r"[!-/:-@[-`{-~]").search(request.form['query']):
+            print("error: invalid input")
+            return redirect('/')
+        query = request.form['query']
+        return redirect('/results')
+    return render_template('top.html')
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    query = SEARCH_WORD
+# @app.route('/', methods=['GET', 'POST'])
+@app.route('/results', methods=['GET', 'POST'])
+def results(query=query):
+    if request.method == 'GET':
+        return redirect('/')
     if request.method == 'POST':
         # input check
         while request.form['query'] == "" or len(request.form['query']) > 30 or re.compile(r"[!-/:-@[-`{-~]").search(request.form['query']):
