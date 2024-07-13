@@ -9,6 +9,11 @@ app = Flask(__name__)
 
 SPARQL_ENDPOINT = "https://ja.dbpedia.org/sparql"
 query = "東京都"
+# { id:"center", label: '姫路城', title: 'This is center node' ,font: {size: 50}},
+#             { from: "center", to: 1, arrows: 'to , middle' },
+# graph_data_list = {"nodes": [ { "id" : "center" , "label" : "姫路城" , "title" : "This is center node" , "font" : {"size" : 50} }] , "edges" : [ { "from" : "center" , "to" : 1 , "arrows" : "to , middle" } ]}
+
+
 
 weight_list = [{"weight" : 0.9 , "p" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" }, 
                {"weight" : 1 , "p" : "http://dbpedia.org/ontology/wikiPageWikiLink"} , 
@@ -33,17 +38,24 @@ weight_list = [{"weight" : 0.9 , "p" : "http://www.w3.org/1999/02/22-rdf-syntax-
 def index(query=query):
     if request.method == 'POST':
         # input check
-        while request.form['query'] == "" or len(request.form['query']) > 30 or re.compile(r"[!-/:-@[-`{-~]").search(request.form['query']):
+        while request.form['query'] == "" or len(request.form['query']) > 20 or re.compile(r"[!-/:-@[-`{-~]").search(request.form['query']):
             print("error: invalid input")
             return redirect('/')
         query = request.form['query']
+
         return redirect('/results')
     return render_template('top.html')
+
+
+
+
 
 
 # @app.route('/', methods=['GET', 'POST'])
 @app.route('/results', methods=['GET', 'POST'])
 def results(query=query):
+    graph_nodes = []
+    graph_edges = []
     if request.method == 'GET':
         return redirect('/')
     if request.method == 'POST':
@@ -51,6 +63,12 @@ def results(query=query):
         while request.form['query'] == "" or len(request.form['query']) > 30 or re.compile(r"[!-/:-@[-`{-~]").search(request.form['query']):
             print("error: invalid input")
         query = request.form['query']
+
+                # もし文字数が7文字以上の場合は、ラベルには7文字までを表示する
+        if len(query) > 7:
+            graph_nodes.append({"id" : "center" , "label" : query[:7]+"..." , "title" : query , "font" : {"size" : 40}})
+        else:
+            graph_nodes.append({"id" : "center" , "label" : query , "title" : query , "font" : {"size" : 40}})
 
     response_s1 = requests.get(SPARQL_ENDPOINT, params={
         'default-graph-uri': 'http://ja.dbpedia.org',
@@ -129,8 +147,28 @@ def results(query=query):
         node_list_1st_s = sorted([{"name" : result["s"] , "weight" : sum([1 + sum([(weight["weight"] - 1) for weight in weight_list if weight["p"] == p]) for p in result["p_list"]])} for result in [{"s" : result["s"]["value"] , "p_list" : [line["p"]["value"] for line in results_s1 if line["s"]["value"] == result["s"]["value"]]} for result in results_s1]], key=lambda x:x["weight"], reverse=True)
         if len(node_list_1st_s) > 9:
             node_list_1st_s = node_list_1st_s[:9]
-        for node in node_list_1st_s:
-            graph_name_list.append(node["name"])
+        # for node in node_list_1st_s:
+        for i in range(len(node_list_1st_s)):
+            graph_name_list.append(node_list_1st_s[i]["name"])
+            new_node_id = "subject_" + str(i+1) + "位"
+            new_node_label = node_list_1st_s[i]["name"]
+            new_node_title = node_list_1st_s[i]["name"]
+            # もし7文字以上なら、7文字までに減らす。余分な 部分をカットする。
+            if len(node_list_1st_s[i]["name"]) > 7:
+                new_node_label = node_list_1st_s[i]["name"][:7]+"..."
+            # 名前に被りがある場合は、nodeを追加せず、 IDだけ取得する
+            if new_node_label in [node["label"] for node in graph_nodes]:
+                new_node_id = [node["id"] for node in graph_nodes if node["label"] == new_node_label][0]
+                # かぶりは、出ないはずなので、この[0]のコードは要らないかもしれない
+            else:
+                graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}})
+                # もし一つ前のnodeも追加されているのなら矢印のないエッジで、それぞれのnode間も結ぶ
+                # { from: 1, to: 2, arrows: { to: { enabled: false } } },
+                # if i > 0 and "subject_" + str(i) + "位" in [node["id"] for node in graph_nodes]:
+                #     graph_edges.append({"from" : "subject_" + str(i) + "位" , "to" : new_node_id , "arrows" : {"to" : {"enabled" : "false"}}})
+
+            graph_edges.append({"from" : "center" , "to" : new_node_id , "arrows" : "to , middle"})
+
     else:
         results_s1 = []
         print("error: response_s1.status_code = ", response_s1.status_code)
@@ -142,34 +180,98 @@ def results(query=query):
         node_list_1st_o = sorted([{"name" : result["o"] , "weight" : sum([1 + sum([(weight["weight"] - 1) for weight in weight_list if weight["p"] == p]) for p in result["p_list"]])} for result in [{"o" : result["o"]["value"] , "p_list" : [line["p"]["value"] for line in results_o1 if line["o"]["value"] == result["o"]["value"]]} for result in results_o1]], key=lambda x:x["weight"], reverse=True)
         if len(node_list_1st_o) > 9:
             node_list_1st_o = node_list_1st_o[:9]
-        for node in node_list_1st_o:
-            graph_name_list.append(node["name"])
+        # for node in node_list_1st_o:
+        for i in range(len(node_list_1st_o)):
+            graph_name_list.append(node_list_1st_o[i]["name"])
+            new_node_id = "object_" + str(i+1) + "位"
+            new_node_label = node_list_1st_o[i]["name"]
+            new_node_title = node_list_1st_o[i]["name"]
+            # もし7文字以上なら、7文字までに減らす。余分な 部分をカットする。
+            if len(node_list_1st_o[i]["name"]) > 7:
+                new_node_label = node_list_1st_o[i]["name"][:7]+"..."
+            # 名前に被りがある場合は、nodeを追加せず、 IDだけ取得する
+            if new_node_label in [node["label"] for node in graph_nodes]:
+                new_node_id = [node["id"] for node in graph_nodes if node["label"] == new_node_label][0]
+                # かぶりは、出ないはずなので、この[0]のコードは要らないかもしれない
+            else:
+                graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}})
+                # もし一つ前のnodeも追加されているのなら矢印のないエッジで、それぞれのnode間も結ぶ
+                # if i > 0 and "object_" + str(i) + "位" in [node["id"] for node in graph_nodes]:
+                #     graph_edges.append({"from" : "object_" + str(i) + "位" , "to" : new_node_id , "arrows" : {"to" : {"enabled" : "false" }}})
+
+            graph_edges.append({"from" : new_node_id , "to" : "center" , "arrows" : "to , middle"})
     else:
         results_o1 = []
         print("error: response_o1.status_code = ", response_o1.status_code)
 
 
     if node_list_1st_s != [] and response_s1.status_code == 200:
+        parent_node_index = -1
         for node in node_list_1st_s:
+            parent_node_index += 1
+            parent_node_id = "subject_" + str(parent_node_index + 1) + "位"
+            parent_node_label = node["name"]
+            # parent_node_title = node["name"]
+            if len(node["name"]) > 7:
+                parent_node_label = node["name"][:7]+"..."
+            if parent_node_label in [node["label"] for node in graph_nodes]:
+                parent_node_id = [node["id"] for node in graph_nodes if node["label"] == parent_node_label][0]
+            
             results_s2 = get_results_s2(node["name"],graph_name_list)
             if results_s2 != []:
                 node_list_2nd_s = sorted([{"name" : result["s"] , "weight" : sum([1 + sum([(weight["weight"] - 1) for weight in weight_list if weight["p"] == p]) for p in result["p_list"]])} for result in [{"s" : result["s"]["value"] , "p_list" : [line["p"]["value"] for line in results_s1 if line["s"]["value"] == result["s"]["value"]]} for result in results_s2]], key=lambda x:x["weight"], reverse=True)
                 if len(node_list_2nd_s) > 1:
                     node_list_2nd_s = node_list_2nd_s[:1]
-                for node in node_list_2nd_s:
-                    graph_name_list.append(node["name"])
+                # for node in node_list_2nd_s:
+                #     graph_name_list.append(node["name"])
+                # 深度2についても同様に、graph_nodesとgraph_edgesに追加していく
+                for i in range(len(node_list_2nd_s)):
+                    graph_name_list.append(node_list_2nd_s[i]["name"])
+                    new_node_id = "subject_" + str(parent_node_index + 1) + "位の" + str(i+1) + "位"
+                    new_node_label = node_list_2nd_s[i]["name"]
+                    new_node_title = node_list_2nd_s[i]["name"]
+                    if len(node_list_2nd_s[i]["name"]) > 7:
+                        new_node_label = node_list_2nd_s[i]["name"][:7]+"..."
+                    if new_node_label in [node["label"] for node in graph_nodes]:
+                        new_node_id = [node["id"] for node in graph_nodes if node["label"] == new_node_label][0]
+                    else:
+                        graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}})
+                    graph_edges.append({"from" : parent_node_id , "to" : new_node_id , "arrows" : "to , middle"})
             else:
                 node_list_2nd_s = []
 
     if node_list_1st_o != [] and response_o1.status_code == 200:
+        parent_node_id = -1
         for node in node_list_1st_o:
+            parent_node_index += 1
+            parent_node_id = "object_" + str(parent_node_index + 1) + "位"
+            parent_node_label = node["name"]
+            # parent_node_title = node["name"]
+            if len(node["name"]) > 7:
+                parent_node_label = node["name"][:7]+"..."
+            if parent_node_label in [node["label"] for node in graph_nodes]:
+                parent_node_id = [node["id"] for node in graph_nodes if node["label"] == parent_node_label][0]
+
             results_o2 = get_results_o2(node["name"],graph_name_list)
             if results_o2 != []:
                 node_list_2nd_o = sorted([{"name" : result["o"] , "weight" : sum([1 + sum([(weight["weight"] - 1) for weight in weight_list if weight["p"] == p]) for p in result["p_list"]])} for result in [{"o" : result["o"]["value"] , "p_list" : [line["p"]["value"] for line in results_o1 if line["o"]["value"] == result["o"]["value"]]} for result in results_o2]], key=lambda x:x["weight"], reverse=True)
                 if len(node_list_2nd_o) > 1:
                     node_list_2nd_o = node_list_2nd_o[:1]
-                for node in node_list_2nd_o:
-                    graph_name_list.append(node["name"])
+                # for node in node_list_2nd_o:
+                #     graph_name_list.append(node["name"])
+                # 深度2についても同様に、graph_nodesとgraph_edgesに追加していく
+                for i in range(len(node_list_2nd_o)):
+                    graph_name_list.append(node_list_2nd_o[i]["name"])
+                    new_node_id = "object_" + str(parent_node_index + 1) + "位の" + str(i+1) + "位"
+                    new_node_label = node_list_2nd_o[i]["name"]
+                    new_node_title = node_list_2nd_o[i]["name"]
+                    if len(node_list_2nd_o[i]["name"]) > 7:
+                        new_node_label = node_list_2nd_o[i]["name"][:7]+"..."
+                    if new_node_label in [node["label"] for node in graph_nodes]:
+                        new_node_id = [node["id"] for node in graph_nodes if node["label"] == new_node_label][0]
+                    else:
+                        graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}})
+                    graph_edges.append({"from" : new_node_id , "to" : parent_node_id , "arrows" : "to , middle"})
             else:
                 node_list_2nd_o = []
 
@@ -179,7 +281,9 @@ def results(query=query):
     
 
     
-    return render_template('index.html', query=query, results=results_s1 , node_list_1st_s=node_list_1st_s , node_list_1st_o=node_list_1st_o, graph_name_list=graph_name_list)
+    return render_template('index.html', query=query, results=results_s1 , node_list_1st_s=node_list_1st_s , node_list_1st_o=node_list_1st_o, graph_name_list=graph_name_list,graph_nodes=graph_nodes,graph_edges=graph_edges)
+
+    
 
 if __name__ == '__main__':
     server_port = os.environ.get('PORT', '8080')

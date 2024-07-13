@@ -1,9 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>SPARQL Query Interface</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.20.0/cytoscape.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style type="text/css">
+        #mynetwork {
+            width: 500px;
+            height: 500px;
+            border: 1px solid lightgray;
+            float: left;
+            margin: 5px;
+        }
+
+        #node-details {
+            width: 200px;
+            height: 200px;
+            border: 1px solid lightgray;
+            float: left;
+            font-size: small;
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+    </style>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
     <style>
         #cy {
             width: 100%;
@@ -12,44 +34,8 @@
         }
     </style>
 </head>
-<body>
-    <!-- <div id="cy"></div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // var node_list_1st_o = {{ node_list_1st_o | safe }};
-            var graph_name_list = {{ graph_name_list | safe }};
-            var elements = nodes.map(function(node, index) {
-                return { data: { id: 'graph_name_list_' + index, label: node } };
-            });
 
-            var cy = cytoscape({
-                container: document.getElementById('cy'),
-                elements: elements,
-                style: [
-                    {
-                        selector: 'node',
-                        style: {
-                            'background-color': '#666',
-                            'label': 'data(label)',
-                            'text-valign': 'center',
-                            'color': '#fff',
-                            'font-size': '10px'
-                        }
-                    }
-                ],
-                layout: {
-                    name: 'concentric',
-                    concentric: function(node) {
-                        return node.degree();
-                    },
-                    levelWidth: function(nodes) {
-                        return 2;
-                    },
-                    spacingFactor: 1.2
-                }
-            });
-        });
-    </script> -->
+<body>
 
 
 
@@ -59,6 +45,88 @@
         <textarea id="query" name="query" rows="10" cols="100">{{ query }}</textarea><br>
         <input type="submit" value="Run Query">
     </form>
+
+    <!-- vis.jsによるグラフサンプル -->
+    <div style="display: flex; margin-top: 20px;">
+        <div id="mynetwork"></div>
+        <div>
+            <h3>Node Details</h3>
+            <div id="node-details"></div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        // コンテンツを全て読み込んだ後で、graph_nodes, graph_edgesを取得する
+        document.addEventListener('DOMContentLoaded',    async function () {
+            // alert("test");
+            const graph_nodes = document.getElementById('graph_nodes').textContent;
+            const graph_edges = document.getElementById('graph_edges').textContent;
+            // alert("graph_nodes :" + graph_nodes);
+            // graph_nodes :[{'id': 'subject_1位', 'label': '2022年の阪...', 'title': '2022年の阪神タイガース', 'font': {'size': 50}}, {'id': 'subject_2位', 'label': 'かとうれいこ', 'title': 'かとうれいこ', 'font': {'size': 50}}, {'id': 'subject_3位', 'label': '原田伸郎', 'title': '原田伸郎', 'font': {'size': 50}}, {'id': 'subject_4位', 'label': '向井寛', 'title': '向井寛', 'font': {'size': 50}}, {'id': 'subject_5位', 'label': '田中次紀', 'title': '田中次紀', 'font': {'size': 50}}, {'id': 'subject_6位', 'label': 'ティーチングプ...', 'title': 'ティーチングプロ', 'font': {'size': 50}}, {'id': 'subject_7位', 'label': 'レッスンプロ', 'title': 'レッスンプロ', 'font': {'size': 50}}, {'id': 'object_1位', 'label': 'ゴルフ', 'title': 'ゴルフ', 'font': {'size': 50}}, {'id': 'object_2位', 'label': 'ゴルファー', 'title': 'ゴルファー', 'font': {'size': 50}}, {'id': 'object_3位', 'label': 'プロフェッショ...', 'title': 'プロフェッショナル', 'font': {'size': 50}}]
+            // alert("graph_nodes_replace() :" + graph_nodes.replace(/'/g, '"'));
+            // graph_nodes_replace() :[{"id": "subject_1位", "label": "かとうれいこ", "title": "かとうれいこ", "font": {"size": 50}}, {"id": "subject_2位", "label": "原田伸郎", "title": "原田伸郎", "font": {"size": 50}}, {"id": "subject_3位", "label": "向井寛", "title": "向井寛", "font": {"size": 50}}, {"id": "subject_4位", "label": "田中次紀", "title": "田中次紀", "font": {"size": 50}}, {"id": "subject_5位", "label": "2022年の阪...", "title": "2022年の阪神タイガース", "font": {"size": 50}}, {"id": "subject_6位", "label": "ティーチングプ...", "title": "ティーチングプロ", "font": {"size": 50}}, {"id": "subject_7位", "label": "レッスンプロ", "title": "レッスンプロ", "font": {"size": 50}}, {"id": "object_1位", "label": "ゴルフ", "title": "ゴルフ", "font": {"size": 50}}, {"id": "object_2位", "label": "ゴルファー", "title": "ゴルファー", "font": {"size": 50}}, {"id": "object_3位", "label": "プロフェッショ...", "title": "プロフェッショナル", "font": {"size": 50}}]
+            // alert("JSON.parse(graph_nodes) :" + JSON.parse(graph_nodes.replace(/'/g, '"')));
+            // JSON.parse(graph_nodes) :[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+            const container = document.getElementById('mynetwork');
+            var data = {
+                nodes: new vis.DataSet(JSON.parse(graph_nodes.replace(/'/g, '"'))),
+                edges: new vis.DataSet(JSON.parse(graph_edges.replace(/'/g, '"'))),
+            };
+            var options = {
+            edges: {
+                arrows: {
+                    to: { enabled: true, scaleFactor: 1 }
+                }
+            }
+        };
+
+            var network = new vis.Network(container, data, options);
+            // ノードの詳細を表示する関数
+            function displayNodeDetails(nodeId) {
+                var node = data.nodes.get(nodeId);
+                if (node) {
+                    document.getElementById('node-details').innerHTML = '<p>ID: ' + node.id + '</p>' +
+                        '<p>Label: ' + node.label + '</p>' +
+                        '<p>Title: ' + node.title + '</p>';
+                } else {
+                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+                }
+            }
+            // ノードクリックイベント
+            network.on("click", function (params) {
+                if (params.nodes.length > 0) {
+                    var nodeId = params.nodes[0];
+                    displayNodeDetails(nodeId);
+                } else {
+                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+                }
+            });
+            // ノードドラッグイベント
+            network.on("dragging", function (params) {
+                if (params.nodes.length > 0) {
+                    var nodeId = params.nodes[0];
+                    displayNodeDetails(nodeId);
+                } else {
+                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+                }
+            });
+        });
+
+
+    </script>
+
+    <div id="graph_nodes">{{ graph_nodes }}</div>
+    <div id="graph_edges">{{ graph_edges }}</div>
+
+    <div id="graph_data_list" style="display: none;" >
+        {{ graph_data_list }}
+    </div>
+
+    <script type="text/javascript"></script>
+
+    // graph_data_list = {"nodes": [ { "id" : "center" , "label" : "姫路城" , "title" : "This is center node" , "font" :
+    {"size" : 50} }] , "edges" : [ { "from" : "center" , "to" : 1 , "arrows" : "to , middle" } ]}
+
 
 
     <h2>Graph_name_list</h2>
@@ -83,4 +151,5 @@
     <p>{{ node_list_1st_o }}</p>
 
 </body>
+
 </html>
