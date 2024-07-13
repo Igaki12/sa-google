@@ -63,12 +63,14 @@ def results(query=query):
         while request.form['query'] == "" or len(request.form['query']) > 30 or re.compile(r"[!-/:-@[-`{-~]").search(request.form['query']):
             print("error: invalid input")
         query = request.form['query']
+        wikipedia_url = "https://ja.wikipedia.org/wiki/" + query
+        google_scholar_url = "https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=" + query
 
                 # もし文字数が7文字以上の場合は、ラベルには7文字までを表示する
         if len(query) > 7:
-            graph_nodes.append({"id" : "center" , "label" : query[:7]+"..." , "title" : query , "font" : {"size" : 40}})
+            graph_nodes.append({"id" : "center" , "label" : query[:7]+"..." , "title" : query , "font" : {"size" : 40} , "wikipedia_url" : wikipedia_url , "google_scholar_url" : google_scholar_url , "color" : "lightblue"})
         else:
-            graph_nodes.append({"id" : "center" , "label" : query , "title" : query , "font" : {"size" : 40}})
+            graph_nodes.append({"id" : "center" , "label" : query , "title" : query , "font" : {"size" : 40} , "wikipedia_url" : wikipedia_url , "google_scholar_url" : google_scholar_url , "color" : "lightblue","border" : "blue","hover": "white"})
 
     response_s1 = requests.get(SPARQL_ENDPOINT, params={
         'default-graph-uri': 'http://ja.dbpedia.org',
@@ -161,7 +163,7 @@ def results(query=query):
                 new_node_id = [node["id"] for node in graph_nodes if node["label"] == new_node_label][0]
                 # かぶりは、出ないはずなので、この[0]のコードは要らないかもしれない
             else:
-                graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}})
+                graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}, "wikipedia_url" : "https://ja.wikipedia.org/wiki/" + new_node_title , "google_scholar_url" : "https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=" + new_node_title,"color" : "lightblue"})
                 # もし一つ前のnodeも追加されているのなら矢印のないエッジで、それぞれのnode間も結ぶ
                 # { from: 1, to: 2, arrows: { to: { enabled: false } } },
                 # if i > 0 and "subject_" + str(i) + "位" in [node["id"] for node in graph_nodes]:
@@ -194,7 +196,7 @@ def results(query=query):
                 new_node_id = [node["id"] for node in graph_nodes if node["label"] == new_node_label][0]
                 # かぶりは、出ないはずなので、この[0]のコードは要らないかもしれない
             else:
-                graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}})
+                graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}, "wikipedia_url" : "https://ja.wikipedia.org/wiki/" + new_node_title , "google_scholar_url" : "https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=" + new_node_title})
                 # もし一つ前のnodeも追加されているのなら矢印のないエッジで、それぞれのnode間も結ぶ
                 # if i > 0 and "object_" + str(i) + "位" in [node["id"] for node in graph_nodes]:
                 #     graph_edges.append({"from" : "object_" + str(i) + "位" , "to" : new_node_id , "arrows" : {"to" : {"enabled" : "false" }}})
@@ -235,7 +237,7 @@ def results(query=query):
                     if new_node_label in [node["label"] for node in graph_nodes]:
                         new_node_id = [node["id"] for node in graph_nodes if node["label"] == new_node_label][0]
                     else:
-                        graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}})
+                        graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}, "wikipedia_url" : "https://ja.wikipedia.org/wiki/" + new_node_title , "google_scholar_url" : "https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=" + new_node_title,"color" : "lightblue"})
                     graph_edges.append({"from" : parent_node_id , "to" : new_node_id , "arrows" : "to , middle"})
             else:
                 node_list_2nd_s = []
@@ -270,7 +272,7 @@ def results(query=query):
                     if new_node_label in [node["label"] for node in graph_nodes]:
                         new_node_id = [node["id"] for node in graph_nodes if node["label"] == new_node_label][0]
                     else:
-                        graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}})
+                        graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}, "wikipedia_url" : "https://ja.wikipedia.org/wiki/" + new_node_title , "google_scholar_url" : "https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=" + new_node_title})
                     graph_edges.append({"from" : new_node_id , "to" : parent_node_id , "arrows" : "to , middle"})
             else:
                 node_list_2nd_o = []
