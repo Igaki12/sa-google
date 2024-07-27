@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sa-Google Search</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style type="text/css">
+        #mynetwork {
+            width: 500px;
+            height: 500px;
+            border: 1px solid lightgray;
+            float: left;
+            margin: 5px;
+        }
+
+        #node-details {
+            width: 200px;
+            height: 200px;
+            border: 1px solid lightgray;
+            float: left;
+            font-size: small;
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+    </style>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css" rel="stylesheet"
+        type="text/css" />
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0 auto;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            display: flex;
+        }
+
+        .search-box input[type="text"] {
+            width: 400px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .search-box input[type="submit"] {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .search-box input[type="submit"]:hover {
+            background-color: #357ae8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="logo">
+        <!-- サイズを指定する -->
+        <img src="../static/LOGO.png" alt="Sa-Google Logo" width="500">
+    </div>
+    <!-- <div class="search-box">
+        <input type="text" placeholder="Search Sa-Google">
+        <button type="button">Search</button>
+    </div> -->
+    <form method="post" class="search-box" action="/results">
+        <input type="text" name="query" placeholder="調べたい言葉">
+        <input type="submit" value="Search">
+    </form>
+
+    <!-- vis.jsによるグラフサンプル -->
+    <div style="display: flex; margin-top: 20px;">
+        <div id="mynetwork"></div>
+        <div>
+            <h3>Node Details</h3>
+            <div id="node-details"></div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        var nodes = new vis.DataSet([
+            { id:"center", label: '姫路城', title: 'This is center node' ,font: {size: 50}},
+            // { id: 1, label: 'Node 1', title: 'This is center node 1' },
+            { id: 2, label: 'Node 2', title: 'This is child node 2 of Node 1' },
+            // 重複すると出力されない
+            // { id: 2, label: 'Node 2', title: 'duplication of Node 2' },
+            { id: 3, label: 'Node 3', title: 'This is child node 3 of Node 1' },
+            { id: 4, label: 'Node 4', title: 'This is child node 4 of Node 1' },
+            { id: 5, label: 'Node 5', title: 'This is child node 5 of Node 1' },
+            { id: 6, label: 'Node 6', title: 'This is child node 6 of Node 1' },
+            { id: 7, label: 'Node 7', title: 'This is child node 7 of Node 1' },
+            { id: 8, label: 'Node 8', title: 'This is child node 8 of Node 1' },
+            { id: 9, label: 'Node 9', title: 'This is child node 9 of Node 1' },
+            { id: 1, label: 'Node 1', title: 'This is child node 1 of Center' },
+            
+            { id: 11, label: 'Node 11', title: 'This is parent node 11 of Node 1' },
+            { id: 12, label: 'Node 12', title: 'This is parent node 12 of Node 1' },
+            { id: 13, label: 'Node 13', title: 'This is parent node 13 of Node 1' },
+            { id: 14, label: 'Node 14', title: 'This is parent node 14 of Node 1' },
+            { id: 15, label: 'Node 15', title: 'This is parent node 15 of Node 1' },
+            { id: 16, label: 'Node 16', title: 'This is parent node 16 of Node 1' },
+            { id: 17, label: 'Node 17', title: 'This is parent node 17 of Node 1' },
+            { id: 18, label: 'Node 18', title: 'This is parent node 18 of Node 1' },
+            { id: 19, label: 'Node 19', title: 'This is parent node 19 of Node 1' },
+
+            { id: 1.1, label: 'Node 1.1', title: 'This is child node 1.1 of Node 1' },
+            { id: 1.2, label: 'Node 1.2', title: 'This is child node 1.2 of Node 1' },
+            { id: 2.1, label: 'Node 2.1', title: 'This is child node 2.1 of Node 2' },
+            { id: 2.2, label: 'Node 2.2', title: 'This is child node 2.2 of Node 2' },
+            { id: 3.1, label: 'Node 3.1', title: 'This is child node 3.1 of Node 3' },
+            { id: 3.2, label: 'Node 3.2', title: 'This is child node 3.2 of Node 3' },
+            { id: 4.1, label: 'Node 4.1', title: 'This is child node 4.1 of Node 4' },
+            { id: 4.2, label: 'Node 4.2', title: 'This is child node 4.2 of Node 4' },
+            { id: 5.1, label: 'Node 5.1', title: 'This is child node 5.1 of Node 5' },
+            { id: 5.2, label: 'Node 5.2', title: 'This is child node 5.2 of Node 5' },
+            { id: 6.1, label: 'Node 6.1', title: 'This is child node 6.1 of Node 6' },
+            { id: 6.2, label: 'Node 6.2', title: 'This is child node 6.2 of Node 6' },
+            { id: 7.1, label: 'Node 7.1', title: 'This is child node 7.1 of Node 7' },
+            { id: 7.2, label: 'Node 7.2', title: 'This is child node 7.2 of Node 7' },
+            { id: 8.1, label: 'Node 8.1', title: 'This is child node 8.1 of Node 8' },
+            { id: 8.2, label: 'Node 8.2', title: 'This is child node 8.2 of Node 8' },
+            { id: 9.1, label: 'Node 9.1', title: 'This is child node 9.1 of Node 9' },
+            { id: 9.2, label: 'Node 9.2', title: 'This is child node 9.2 of Node 9' },
+
+            { id: 11.1, label: 'Node 11.1', title: 'This is parent node 11.1 of Node 11' },
+            { id: 11.2, label: 'Node 11.2', title: 'This is parent node 11.2 of Node 11' },
+            { id: 12.1, label: 'Node 12.1', title: 'This is parent node 12.1 of Node 12' },
+            { id: 12.2, label: 'Node 12.2', title: 'This is parent node 12.2 of Node 12' },
+            { id: 13.1, label: 'Node 13.1', title: 'This is parent node 13.1 of Node 13' },
+            { id: 13.2, label: 'Node 13.2', title: 'This is parent node 13.2 of Node 13' },
+            { id: 14.1, label: 'Node 14.1', title: 'This is parent node 14.1 of Node 14' },
+            { id: 14.2, label: 'Node 14.2', title: 'This is parent node 14.2 of Node 14' },
+            { id: 15.1, label: 'Node 15.1', title: 'This is parent node 15.1 of Node 15' },
+            { id: 15.2, label: 'Node 15.2', title: 'This is parent node 15.2 of Node 15' },
+            { id: 16.1, label: 'Node 16.1', title: 'This is parent node 16.1 of Node 16' },
+            { id: 16.2, label: 'Node 16.2', title: 'This is parent node 16.2 of Node 16' },
+            { id: 17.1, label: 'Node 17.1', title: 'This is parent node 17.1 of Node 17' },
+            { id: 17.2, label: 'Node 17.2', title: 'This is parent node 17.2 of Node 17' },
+            { id: 18.1, label: 'Node 18.1', title: 'This is parent node 18.1 of Node 18' },
+            { id: 18.2, label: 'Node 18.2', title: 'This is parent node 18.2 of Node 18' },
+            { id: 19.1, label: 'Node 19.1', title: 'This is parent node 19.1 of Node 19' },
+            { id: 19.2, label: 'Node 19.2', title: 'This is parent node 19.2 of Node 19' },
+
+        ]);
+
+        var edges = new vis.DataSet([
+            { from: 1, to: 2, arrows: { to: { enabled: false } } }, 
+            { from: 2, to: 3, arrows: { to: { enabled: false } } }, // 矢印なし
+            { from: 3, to: 4, arrows: { to: { enabled: false } } },
+            { from: 4, to: 5, arrows: { to: { enabled: false } } },
+            { from: 5, to: 6, arrows: { to: { enabled: false } } },
+            { from: 6, to: 7, arrows: { to: { enabled: false } } },
+            { from: 7, to: 8, arrows: { to: { enabled: false } } },
+            { from: 8, to: 9, arrows: { to: { enabled: false } } },
+            { from: 9, to: 10, arrows: { to: { enabled: false } } },
+            
+            { from: 11, to: 12, arrows: { to: { enabled: false } } },
+            { from: 12, to: 13, arrows: { to: { enabled: false } } },
+            { from: 13, to: 14, arrows: { to: { enabled: false } } },
+            { from: 14, to: 15, arrows: { to: { enabled: false } } },
+            { from: 15, to: 16, arrows: { to: { enabled: false } } },
+            { from: 16, to: 17, arrows: { to: { enabled: false } } },
+            { from: 17, to: 18, arrows: { to: { enabled: false } } },
+            { from: 18, to: 19, arrows: { to: { enabled: false } } },
+
+            { from: 1.1, to: 1.2, arrows: { to: { enabled: false } } }, 
+            { from: 1.2, to: 2.1, arrows: { to: { enabled: false } } }, 
+            { from: 2.1, to: 2.2, arrows: { to: { enabled: false } } }, 
+            { from: 3.1, to: 3.2, arrows: { to: { enabled: false } } }, 
+            { from: 4.1, to: 4.2, arrows: { to: { enabled: false } } }, 
+            { from: 5.1, to: 5.2, arrows: { to: { enabled: false } } }, 
+            { from: 6.1, to: 6.2, arrows: { to: { enabled: false } } }, 
+            { from: 7.1, to: 7.2, arrows: { to: { enabled: false } } }, 
+            { from: 8.1, to: 8.2, arrows: { to: { enabled: false } } }, 
+            { from: 9.1, to: 9.2, arrows: { to: { enabled: false } } }, 
+
+            { from: 11.1, to: 11.2, arrows: { to: { enabled: false } } }, 
+            { from: 12.1, to: 12.2, arrows: { to: { enabled: false } } }, 
+            { from: 13.1, to: 13.2, arrows: { to: { enabled: false } } }, 
+            { from: 14.1, to: 14.2, arrows: { to: { enabled: false } } }, 
+            { from: 15.1, to: 15.2, arrows: { to: { enabled: false } } }, 
+            { from: 16.1, to: 16.2, arrows: { to: { enabled: false } } }, 
+            { from: 17.1, to: 17.2, arrows: { to: { enabled: false } } }, 
+            { from: 18.1, to: 18.2, arrows: { to: { enabled: false } } }, 
+            { from: 19.1, to: 19.2, arrows: { to: { enabled: false } } }, 
+
+            { from: "center", to: 1, arrows: 'to , middle' },
+            { from: "center", to: 2, arrows: 'to , middle' },
+            { from: "center", to: 3, arrows: 'to , middle' },
+            { from: "center", to: 4, arrows: 'to , middle' },
+            { from: "center", to: 5, arrows: 'to , middle' },
+            { from: "center", to: 6, arrows: 'to , middle' },
+            { from: "center", to: 7, arrows: 'to , middle' },
+            { from: "center", to: 8, arrows: 'to , middle' },
+            { from: "center", to: 9, arrows: 'to , middle' },
+            { from: "center", to: 10, arrows: 'to , middle' },
+            { from: 11, to: "center", arrows: 'to , middle' },
+            { from: 12, to: "center", arrows: 'to , middle' },
+            { from: 13, to: "center", arrows: 'to , middle' },
+            { from: 14, to: "center", arrows: 'to , middle' },
+            { from: 15, to: "center", arrows: 'to , middle' },
+            { from: 16, to: "center", arrows: 'to , middle' },
+            { from: 17, to: "center", arrows: 'to , middle' },
+            { from: 18, to: "center", arrows: 'to , middle' },
+            { from: 19, to: "center", arrows: 'to , middle' },
+
+            { from: 1, to: 1.1, arrows: 'to , middle' },
+            { from: 1, to: 1.2, arrows: 'to , middle' },
+            { from: 2, to: 2.1, arrows: 'to , middle' },
+            { from: 2, to: 2.2, arrows: 'to , middle' },
+            { from: 3, to: 3.1, arrows: 'to , middle' },
+            { from: 3, to: 3.2, arrows: 'to , middle' },
+            { from: 4, to: 4.1, arrows: 'to , middle' },
+            { from: 4, to: 4.2, arrows: 'to , middle' },
+            { from: 5, to: 5.1, arrows: 'to , middle' },
+            { from: 5, to: 5.2, arrows: 'to , middle' },
+            { from: 6, to: 6.1, arrows: 'to , middle' },
+            { from: 6, to: 6.2, arrows: 'to , middle' },
+            { from: 7, to: 7.1, arrows: 'to , middle' },
+            { from: 7, to: 7.2, arrows: 'to , middle' },
+            { from: 8, to: 8.1, arrows: 'to , middle' },
+            { from: 8, to: 8.2, arrows: 'to , middle' },
+            { from: 9, to: 9.1, arrows: 'to , middle' },
+            { from: 9, to: 9.2, arrows: 'to , middle' },
+
+            { from: 11.1, to: 11, arrows: 'to , middle' },
+            { from: 11.2, to: 11, arrows: 'to , middle' },
+            { from: 12.1, to: 12, arrows: 'to , middle' },
+            { from: 12.2, to: 12, arrows: 'to , middle' },
+            { from: 13.1, to: 13, arrows: 'to , middle' },
+            { from: 13.2, to: 13, arrows: 'to , middle' },
+            { from: 14.1, to: 14, arrows: 'to , middle' },
+            { from: 14.2, to: 14, arrows: 'to , middle' },
+            { from: 15.1, to: 15, arrows: 'to , middle' },
+            { from: 15.2, to: 15, arrows: 'to , middle' },
+            { from: 16.1, to: 16, arrows: 'to , middle' },
+            { from: 16.2, to: 16, arrows: 'to , middle' },
+            { from: 17.1, to: 17, arrows: 'to , middle' },
+            { from: 17.2, to: 17, arrows: 'to , middle' },
+            { from: 18.1, to: 18, arrows: 'to , middle' },
+            { from: 18.2, to: 18, arrows: 'to , middle' },
+            { from: 19.1, to: 19, arrows: 'to , middle' },
+            { from: 19.2, to: 19, arrows: 'to , middle' },
+
+
+
+            // { from: 1, to: 2, arrows: 'to , middle' },
+            // { from: 1, to: 3, arrows: 'to , middle' },
+            // { from: 1, to: 4, arrows: 'to , middle' },
+            // { from: 1, to: 5, arrows: 'to , middle' },
+            // { from: 1, to: 6, arrows: 'to , middle' },
+            // { from: 1, to: 7, arrows: 'to , middle' },
+            // { from: 1, to: 8, arrows: 'to , middle' },
+            // { from: 1, to: 9, arrows: 'to , middle' },
+            // { from: 1, to: 10, arrows: 'to , middle' },
+            // { from: 11, to: 1, arrows: 'to , middle' },
+            // { from: 12, to: 1, arrows: 'to , middle' },
+            // { from: 13, to: 1, arrows: 'to , middle' },
+            // { from: 14, to: 1, arrows: 'to , middle' },
+            // { from: 15, to: 1, arrows: 'to , middle' },
+            // { from: 16, to: 1, arrows: 'to , middle' },
+            // { from: 17, to: 1, arrows: 'to , middle' },
+            // { from: 18, to: 1, arrows: 'to , middle' },
+            // { from: 19, to: 1, arrows: 'to , middle' },
+            // { from: 1, to: 4, arrows: 'to' },
+            // { from: 1, to: 5, arrows: 'to' },
+            // { from: 1, to: 6, arrows: 'to' },
+            // { from: 1, to: 7, arrows: 'to' },
+            // { from: 1, to: 8, arrows: 'to' },
+            // { from: 1, to: 9, arrows: 'to' },
+            // { from: 1, to: 10, arrows: 'to' },
+            // { from: 11, to: 1, arrows: 'to' },
+            // { from: 12, to: 1, arrows: 'to' },
+            // { from: 13, to: 1, arrows: 'to' },
+            // { from: 14, to: 1, arrows: 'to' },
+            // { from: 15, to: 1, arrows: 'to' },
+            // { from: 16, to: 1, arrows: 'to' },
+            // { from: 17, to: 1, arrows: 'to' },
+            // { from: 18, to: 1, arrows: 'to' },
+            // { from: 19, to: 1, arrows: 'to' },
+
+        ]);
+
+        var container = document.getElementById('mynetwork');
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        var options = {
+            edges: {
+                arrows: {
+                    to: { enabled: true, scaleFactor: 1 }
+                }
+            }
+        };
+
+        var network = new vis.Network(container, data, options);
+
+        // ノードの詳細を表示する関数
+        function displayNodeDetails(nodeId) {
+            var node = nodes.get(nodeId);
+            if (node) {
+                document.getElementById('node-details').innerHTML = '<p>ID: ' + node.id + '</p>' +
+                    '<p>Label: ' + node.label + '</p>' +
+                    '<p>Title: ' + node.title + '</p>';
+            } else {
+                document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+            }
+        }
+
+        // ノードクリックイベント
+        network.on("click", function (params) {
+            if (params.nodes.length > 0) {
+                var nodeId = params.nodes[0];
+                displayNodeDetails(nodeId);
+            } else {
+                document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+            }
+        });
+
+        // ノードドラッグイベント
+        network.on("dragging", function (params) {
+            if (params.nodes.length > 0) {
+                var nodeId = params.nodes[0];
+                displayNodeDetails(nodeId);
+            } else {
+                document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

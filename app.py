@@ -6,6 +6,7 @@ from flask import Flask, render_template, request , redirect
 import requests
 
 app = Flask(__name__)
+app.debug = True
 
 SPARQL_ENDPOINT = "https://ja.dbpedia.org/sparql"
 query = "東京都"
