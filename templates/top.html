@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBL_assistant web</title>
+    <title>PBL_assistant_web</title>
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style type="text/css">
         #mynetwork {
@@ -131,6 +131,7 @@
             float: right;
             font-size: 28px;
             font-weight: bold;
+            display: none;
         }
 
         .close-button:hover,
@@ -213,45 +214,42 @@
             const span = document.getElementsByClassName("close-button")[0];
 
             btn.onclick = function () {
+                // モーダルをゆっくり表示させる
                 modal.style.display = "block";
+                modal.style.opacity = 0;
+                let op = 0;
+                const timer = setInterval(() => {
+                    if (op >= 1) {
+                        clearInterval(timer);
+                    }
+                    modal.style.opacity = op;
+                    op += 0.1;
+                }, 30);
+                // 20秒後に spanを表示する。 ゆっくりフェイドインさせて。
+                setTimeout(() => {
+                    span.style.display = "block";
+                    span.style.opacity = 0;
+                    let op = 0;
+                    const timer = setInterval(() => {
+                        if (op >= 1) {
+                            clearInterval(timer);
+                        }
+                        span.style.opacity = op;
+                        op += 0.1;
+                    }, 100);
+                }, 20000);
+
             }
 
             span.onclick = function () {
                 modal.style.display = "none";
             }
 
-            window.onclick = function (event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                }
-            }
-            // スマホの場合に、画面を横向きに固定する
-            function lockOrientation() {
-            if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(function(error) {
-                    console.error('このデバイスでは、画面を横向きにすることを推奨しています。');
-                });
-            } else if (screen.lockOrientation) {
-                screen.lockOrientation('landscape').catch(function(error) {
-                    console.error('このデバイスでは、画面を横向きにすることを推奨しています。');
-                });
-            } else if (screen.mozLockOrientation) {
-                screen.mozLockOrientation('landscape').catch(function(error) {
-                    console.error('このデバイスでは、画面を横向きにすることを推奨しています。');
-                    // console.error('Orientation lock failed:', error);
-                });
-            } else if (screen.msLockOrientation) {
-                screen.msLockOrientation('landscape').catch(function(error) {
-                    console.error('このデバイスでは、画面を横向きにすることを推奨しています。');
-                    // console.error('Orientation lock failed:', error);
-                });
-            } else {
-                alert("このデバイスでは、画面を横向きにすることを推奨しています。");
-                // alert('Orientation lock not supported on this device.');
-            }
-        }
-
-        window.addEventListener('load', lockOrientation);
+            // window.onclick = function (event) {
+            //     if (event.target == modal) {
+            //         modal.style.display = "none";
+            //     }
+            // }
         });
 
     </script>
