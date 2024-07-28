@@ -7,12 +7,12 @@
     <title>PBL_assistant_web</title>
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style type="text/css">
-        #mynetwork {
-            width: 500px;
-            height: 500px;
-            border: 1px solid lightgray;
+        /* #mynetwork {
+            width: 100vw;
+            height: 90%;
+            min-height: 60vh;
             float: left;
-            margin: 5px;
+            margin: 0px;
         }
 
         #node-details {
@@ -23,7 +23,7 @@
             font-size: small;
             padding-right: 10px;
             padding-left: 10px;
-        }
+        } */
     </style>
     <style type="text/css">
         body,
@@ -37,13 +37,15 @@
             /* The image used */
             background-image: url('../static/image.jpg');
 
-            /* Control the height of the image */
-            height: 100%;
+            /* Control the heighct of the image */
+            margin: 0;
+            height: 90%;
             width: 100vw;
-            max-height: 57vw;
+            /* max-height: 57vw; */
+            min-height: 60vh;
 
             /* Center and scale the image nicely */
-            background-position: left;
+            background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
             position: relative;
@@ -52,16 +54,19 @@
 
         .title-logo {
             position: absolute;
+            margin-bottom: -40px;
             bottom: 10%;
             /* width: 50%; */
-            width: 500px;
-            max-width: 80vw;
+            width: 800px;
+            max-width: 98vw;
         }
 
         .search-container {
             position: absolute;
-            top: 8%;
-            right: 20%;
+            top: 10%;
+            margin-top: -20px;
+            right: 22%;
+            margin-right: -70px;
 
             text-align: right;
         }
@@ -104,7 +109,8 @@
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.4);
         }
-        .modal-p{
+
+        .modal-p {
             /* margin-top: -20%;
             margin-bottom: 20%; */
             font-weight: bold;
@@ -150,10 +156,12 @@
             animation: spin 2s linear infinite;
             margin: 0 auto;
         }
+
         .footer {
             /* position: fixed; */
             margin: 0;
-            padding: 2px;
+            padding-top: 2px;
+            padding-bottom: 2px;
             left: 0;
             bottom: 0;
             width: 100%;
@@ -182,18 +190,52 @@
             <input type="submit" value="検索" id="openModalButton" />
 
         </form>
-        <img class="title-logo" src="../static/titleLOGO_transparent.png">
+        <img class="title-logo" src="../static/title2.png" alt="title">
     </div>
-    <!-- <div style="display: flex; margin-top: 20px;">
-        <div id="mynetwork"></div>
-        <div>
-            <h3>Node Details</h3>
-            <div id="node-details"></div>
+
+    <!-- 操作方法を説明するコーナー -->
+    <div style="margin-top: 3px; text-align: center;background-color: #fcdada; padding: 10px;">
+        <!-- POPでフラットなデザイン -->
+        <h2 style="padding:10px; background-color: #B22222; color: white; border: radius 50vh; margin-top: 0;">操作方法</h2>
+        <p>1.検索ボックスに調べたい言葉を入力し、検索ボタンを押してください</p>
+        <p>2.検索結果を待つ</p>
+        <p>3.検索結果はネットワーク図で表示されます</p>
+        <p>4.グラフは自由に拡大・縮小・つまんで引っ張ることができます(vis.js)</p>
+        <div style="display: flex; margin-top: 20px; background-color: #fff; flex-wrap: wrap; justify-content: center; max-width: 1105px; margin: 0 auto;">
+            <div id="mynetwork"
+                style="width: 100vw; height: 80vh; float: left; margin: 0px; max-width: 800px; max-height: 800px;">
+            </div>
+            <div style="border: 1px black solid; background-color: #ffffffdd; width: 300px; min-height: 300px;">
+                <!-- POPでフラットなデザイン -->
+                <h3
+                    style="padding-top:10px; padding-bottom: 10px; background-color: #B22222; color: white; border: radius 10px; margin-top: 0; width: 100%;">
+                    ノード詳細</h3>
+                <div id="node-details">気になる単語をクリックしてみてください。ここに単語の詳細について表示されます</div>
+            </div>
         </div>
+    </div>
 
-    </div> -->
+    <!--         #mynetwork {
+            width: 100vw;
+            height: 90%;
+            min-height: 60vh;
+            /* border: 1px solid lightgray; */
+            float: left;
+            margin: 0px;
+        }
 
-<!-- 一般的なフッター (C)2024- Happyman と文字だけ -->
+        #node-details {
+            width: 200px;
+            height: 200px;
+            border: 1px solid lightgray;
+            float: left;
+            font-size: small;
+            padding-right: 10px;
+            padding-left: 10px;
+        } -->
+
+
+    <!-- 一般的なフッター (C)2024- Happyman と文字だけ -->
     <footer class="footer">
         <p>&copy; 2024 - Happyman</p>
     </footer>
@@ -252,6 +294,364 @@
             // }
         });
 
+    </script>
+    <script type="text/javascript">
+        var nodes = new vis.DataSet([
+            {
+                id: 'center',
+                label: '山陽本線',
+                title: '山陽本線',
+                font: { size: 40 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/山陽本線',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=山陽本線',
+                color: 'lightblue',
+                border: 'blue',
+                hover: 'white'
+            },
+            {
+                id: 'subject_1位',
+                label: 'EtSETOr...',
+                title: 'EtSETOra',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/EtSETOra',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=EtSETOraAND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_2位',
+                label: 'JR神戸線',
+                title: 'JR神戸線',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/JR神戸線',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=JR神戸線AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_3位',
+                label: 'TWILIGH...',
+                title: 'TWILIGHT_EXPRESS_瑞風',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/TWILIGHT_EXPRESS_瑞風',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=TWILIGHT_EXPRESS_瑞風AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_4位',
+                label: '○○のはなし',
+                title: '○○のはなし',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/○○のはなし',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=○○のはなしAND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_5位',
+                label: 'いそかぜ_(列...',
+                title: 'いそかぜ_(列車)',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/いそかぜ_(列車)',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=いそかぜ_(列車)AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_6位',
+                label: 'いなば_(列車...',
+                title: 'いなば_(列車)',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/いなば_(列車)',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=いなば_(列車)AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_7位',
+                label: 'まつかぜ_(列...',
+                title: 'まつかぜ_(列車)',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/まつかぜ_(列車)',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=まつかぜ_(列車)AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_8位',
+                label: 'ゆめシティ',
+                title: 'ゆめシティ',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/ゆめシティ',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=ゆめシティAND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_9位',
+                label: 'らくラクはりま',
+                title: 'らくラクはりま',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/らくラクはりま',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=らくラクはりまAND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'object_1位',
+                label: '山陽鉄道',
+                title: '山陽鉄道',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/山陽鉄道',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=山陽鉄道AND山陽本線'
+            },
+            {
+                id: 'object_2位',
+                label: '山陽地方',
+                title: '山陽地方',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/山陽地方',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=山陽地方AND山陽本線'
+            },
+            {
+                id: 'object_8位',
+                label: '山陽本線（さん...',
+                title: '山陽本線（さんようほんせん）は、兵庫県神戸市中央区の神戸駅から福岡県北九州市門司区の門司駅までを瀬戸内海に沿って結ぶJRの鉄道路線（幹線）である。本線のほか、通称「和田岬線」と呼ばれる兵庫駅 - 和田岬駅間の支線を持つ。神戸駅 - 下関駅間と和田岬線は西日本旅客鉄道（JR西日本）、下関駅 - 門司駅間は九州旅客鉄道（JR九州）の管轄となっている。東海道本線と並び、日本の鉄道交通・物流の大動脈を担い続けている。 なお、広義では山陽新幹線の新神戸駅から小倉駅までの区間も山陽本線に含める場合があるが、本項目では在来線としての山陽本線全般の概要や沿革などについて記す。新幹線については「山陽新幹線」を、また在来線の地域ごとの詳細については以下の記事も参照。 * JR神戸線 （神戸駅 - 姫路駅間） * 山陽本線 (広島地区) （白市駅 - 岩国駅間）',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/山陽本線（さんようほんせん）は、兵庫県神戸市中央区の神戸駅から福岡県北九州市門司区の門司駅までを瀬戸内海に沿って結ぶJRの鉄道路線（幹線）である。本線のほか、通称「和田岬線」と呼ばれる兵庫駅 - 和田岬駅間の支線を持つ。神戸駅 - 下関駅間と和田岬線は西日本旅客鉄道（JR西日本）、下関駅 - 門司駅間は九州旅客鉄道（JR九州）の管轄となっている。東海道本線と並び、日本の鉄道交通・物流の大動脈を担い続けている。 なお、広義では山陽新幹線の新神戸駅から小倉駅までの区間も山陽本線に含める場合があるが、本項目では在来線としての山陽本線全般の概要や沿革などについて記す。新幹線については「山陽新幹線」を、また在来線の地域ごとの詳細については以下の記事も参照。 * JR神戸線 （神戸駅 - 姫路駅間） * 山陽本線 (広島地区) （白市駅 - 岩国駅間）',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=山陽本線（さんようほんせん）は、兵庫県神戸市中央区の神戸駅から福岡県北九州市門司区の門司駅までを瀬戸内海に沿って結ぶJRの鉄道路線（幹線）である。本線のほか、通称「和田岬線」と呼ばれる兵庫駅 - 和田岬駅間の支線を持つ。神戸駅 - 下関駅間と和田岬線は西日本旅客鉄道（JR西日本）、下関駅 - 門司駅間は九州旅客鉄道（JR九州）の管轄となっている。東海道本線と並び、日本の鉄道交通・物流の大動脈を担い続けている。 なお、広義では山陽新幹線の新神戸駅から小倉駅までの区間も山陽本線に含める場合があるが、本項目では在来線としての山陽本線全般の概要や沿革などについて記す。新幹線については「山陽新幹線」を、また在来線の地域ごとの詳細については以下の記事も参照。 * JR神戸線 （神戸駅 - 姫路駅間） * 山陽本線 (広島地区) （白市駅 - 岩国駅間）AND山陽本線'
+            },
+            {
+                id: 'subject_1位の1位',
+                label: 'グリーン車',
+                title: 'グリーン車',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/グリーン車',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=グリーン車AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_2位の1位',
+                label: '京阪神緩行線',
+                title: '京阪神緩行線',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/京阪神緩行線',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=京阪神緩行線AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_3位の1位',
+                label: 'WEST_EX...',
+                title: 'WEST_EXPRESS_銀河',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/WEST_EXPRESS_銀河',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=WEST_EXPRESS_銀河AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_4位の1位',
+                label: '下関市',
+                title: '下関市',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/下関市',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=下関市AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_5位の1位',
+                label: '1980年代・...',
+                title: '1980年代・1990年代のJRダイヤ改正',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/1980年代・1990年代のJRダイヤ改正',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=1980年代・1990年代のJRダイヤ改正AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_6位の1位',
+                label: '2000年代の...',
+                title: '2000年代のJRダイヤ改正',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/2000年代のJRダイヤ改正',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=2000年代のJRダイヤ改正AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_7位の1位',
+                label: '1972年3月...',
+                title: '1972年3月15日国鉄ダイヤ改正',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/1972年3月15日国鉄ダイヤ改正',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=1972年3月15日国鉄ダイヤ改正AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_8位の1位',
+                label: 'ゆめタウン長府',
+                title: 'ゆめタウン長府',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/ゆめタウン長府',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=ゆめタウン長府AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'subject_9位の1位',
+                label: 'JR西日本68...',
+                title: 'JR西日本683系電車',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/JR西日本683系電車',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=JR西日本683系電車AND山陽本線',
+                color: 'lightblue'
+            },
+            {
+                id: 'object_10位の1位',
+                label: '兵庫県',
+                title: '兵庫県',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/兵庫県',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=兵庫県AND山陽本線'
+            },
+            {
+                id: 'object_11位の1位',
+                label: '山口県',
+                title: '山口県',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/山口県',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=山口県AND山陽本線'
+            },
+            {
+                id: 'object_12位の1位',
+                label: '兵庫駅',
+                title: '兵庫駅',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/兵庫駅',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=兵庫駅AND山陽本線'
+            },
+            {
+                id: 'object_13位の1位',
+                label: '岡山県',
+                title: '岡山県',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/岡山県',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=岡山県AND山陽本線'
+            },
+            {
+                id: 'object_14位の1位',
+                label: '広島県',
+                title: '広島県',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/広島県',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=広島県AND山陽本線'
+            },
+            {
+                id: 'object_15位の1位',
+                label: '和田岬駅',
+                title: '和田岬駅',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/和田岬駅',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=和田岬駅AND山陽本線'
+            },
+            {
+                id: 'object_16位の1位',
+                label: 'アーバンネット...',
+                title: 'アーバンネットワーク',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/アーバンネットワーク',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=アーバンネットワークAND山陽本線'
+            },
+            {
+                id: 'object_18位の1位',
+                label: '単線',
+                title: '単線',
+                font: { size: 20 },
+                wikipedia_url: 'https://ja.wikipedia.org/wiki/単線',
+                google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=単線AND山陽本線'
+            }]
+        );
+
+        var edges = new vis.DataSet(
+
+            [
+                { from: 'center', to: 'subject_1位', arrows: 'to , middle' },
+                { from: 'center', to: 'subject_2位', arrows: 'to , middle' },
+                { from: 'center', to: 'subject_3位', arrows: 'to , middle' },
+                { from: 'center', to: 'subject_4位', arrows: 'to , middle' },
+                { from: 'center', to: 'subject_5位', arrows: 'to , middle' },
+                { from: 'center', to: 'subject_6位', arrows: 'to , middle' },
+                { from: 'center', to: 'subject_7位', arrows: 'to , middle' },
+                { from: 'center', to: 'subject_8位', arrows: 'to , middle' },
+                { from: 'center', to: 'subject_9位', arrows: 'to , middle' },
+                { from: 'object_1位', to: 'center', arrows: 'to , middle' },
+                { from: 'object_2位', to: 'center', arrows: 'to , middle' },
+                { from: 'object_1位', to: 'center', arrows: 'to , middle' },
+                { from: 'object_2位', to: 'center', arrows: 'to , middle' },
+                { from: 'object_2位', to: 'center', arrows: 'to , middle' },
+                { from: 'object_1位', to: 'center', arrows: 'to , middle' },
+                { from: 'center', to: 'center', arrows: 'to , middle' },
+                { from: 'object_8位', to: 'center', arrows: 'to , middle' },
+                { from: 'center', to: 'center', arrows: 'to , middle' },
+                { from: 'subject_1位', to: 'subject_1位の1位', arrows: 'to , middle' },
+                { from: 'subject_2位', to: 'subject_2位の1位', arrows: 'to , middle' },
+                { from: 'subject_3位', to: 'subject_3位の1位', arrows: 'to , middle' },
+                { from: 'subject_4位', to: 'subject_4位の1位', arrows: 'to , middle' },
+                { from: 'subject_5位', to: 'subject_5位の1位', arrows: 'to , middle' },
+                { from: 'subject_6位', to: 'subject_6位の1位', arrows: 'to , middle' },
+                { from: 'subject_7位', to: 'subject_7位の1位', arrows: 'to , middle' },
+                { from: 'subject_8位', to: 'subject_8位の1位', arrows: 'to , middle' },
+                { from: 'subject_9位', to: 'subject_9位の1位', arrows: 'to , middle' },
+                { from: 'object_10位の1位', to: 'object_1位', arrows: 'to , middle' },
+                { from: 'object_11位の1位', to: 'object_2位', arrows: 'to , middle' },
+                { from: 'object_12位の1位', to: 'object_1位', arrows: 'to , middle' },
+                { from: 'object_13位の1位', to: 'object_2位', arrows: 'to , middle' },
+                { from: 'object_14位の1位', to: 'object_2位', arrows: 'to , middle' },
+                { from: 'object_15位の1位', to: 'object_1位', arrows: 'to , middle' },
+                { from: 'object_16位の1位', to: 'center', arrows: 'to , middle' },
+                { from: 'object_18位の1位', to: 'center', arrows: 'to , middle' }
+            ]
+        );
+
+        var container = document.getElementById('mynetwork');
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        var options = {
+            edges: {
+                arrows: {
+                    to: { enabled: true, scaleFactor: 1 }
+                }
+            }
+        };
+
+        var network = new vis.Network(container, data, options);
+
+       // ノードの詳細を表示する関数
+       function displayNodeDetails(nodeId) {
+                var node = data.nodes.get(nodeId);
+                if (node) {
+                    if (node.wikipedia_url) {
+                        document.getElementById('node-details').innerHTML = '<p>ID: ' + node.id + '</p>' +
+                            '<p>Label: ' + node.label + '</p>' +
+                            '<p>Title: ' + node.title + '</p>' + '<a href="' + node.wikipedia_url + '" target="_blank">Wikipedia</a>' + '<br>' + '<a href="' + node.google_scholar_url + '" target="_blank" onclick="alert(' + node.google_scholar_url + ')">Google Scholar</a>';
+                    } else {
+                        document.getElementById('node-details').innerHTML = '<p>ID: ' + node.id + '</p>' +
+                            '<p>Label: ' + node.label + '</p>' +
+                            '<p>Title: ' + node.title + '</p>';
+                    }
+                } else {
+                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+                }
+            }
+            // ノードクリックイベント
+            network.on("click", function (params) {
+                if (params.nodes.length > 0) {
+                    var nodeId = params.nodes[0];
+                    displayNodeDetails(nodeId);
+                } else {
+                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+                }
+            });
+            // ノードドラッグイベント
+            network.on("dragging", function (params) {
+                if (params.nodes.length > 0) {
+                    var nodeId = params.nodes[0];
+                    displayNodeDetails(nodeId);
+                } else {
+                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+                }
+            });
+        
     </script>
 </body>
 
