@@ -31,154 +31,161 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
+            font-size: 18px;
+        }
+        button {
+            font-size: 18px;
+        }
+        input[type=text] {
+            font-size: 18px;
         }
 
-        .bg-image {
-            /* The image used */
-            background-image: url('../static/image.jpg');
+            .bg-image {
+                /* The image used */
+                background-image: url('../static/image.jpg');
 
-            /* Control the heighct of the image */
-            margin: 0;
-            height: 90%;
-            width: 100vw;
-            /* max-height: 57vw; */
-            min-height: 60vh;
+                /* Control the heighct of the image */
+                margin: 0;
+                height: 90%;
+                width: 100vw;
+                /* max-height: 57vw; */
+                min-height: 60vh;
 
-            /* Center and scale the image nicely */
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            position: relative;
+                /* Center and scale the image nicely */
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                position: relative;
 
-        }
+            }
 
-        .title-logo {
-            position: absolute;
-            margin-bottom: -40px;
-            bottom: 10%;
-            /* width: 50%; */
-            width: 800px;
-            max-width: 98vw;
-        }
+            .title-logo {
+                position: absolute;
+                margin-bottom: -40px;
+                bottom: 10%;
+                /* width: 50%; */
+                width: 800px;
+                max-width: 99vw;
+            }
 
-        .search-container {
-            position: absolute;
-            top: 10%;
-            margin-top: -20px;
-            right: 22%;
-            margin-right: -70px;
+            .search-container {
+                position: absolute;
+                top: 10%;
+                margin-top: -20px;
+                right: 25%;
+                margin-right: -100px;
 
-            text-align: right;
-        }
+                text-align: right;
+            }
 
-        /* input[type=text] { */
-        .search-container input[type=text] {
-            width: 60%;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            margin-top: 8px;
-            margin-bottom: -9%;
-            margin-right: 9%;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        }
+            /* input[type=text] { */
+            .search-container input[type=text] {
+                width: 60%;
+                padding: 12px;
+                border: none;
+                border-radius: 4px;
+                margin-top: 8px;
+                margin-bottom: -9%;
+                margin-right: 9%;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            }
 
-        /* button { */
-        .search-container input[type=submit] {
-            padding: 5px;
-            background-color: #B22222;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+            /* button { */
+            .search-container input[type=submit] {
+                padding: 5px;
+                background-color: #B22222;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
 
-        /* button:hover { */
-        .search-container input[type=submit]:hover {
-            background-color: #45a049;
-        }
+            /* button:hover { */
+            .search-container input[type=submit]:hover {
+                background-color: #45a049;
+            }
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0, 0, 0, 0.4);
+            }
 
-        .modal-p {
-            /* margin-top: -20%;
+            .modal-p {
+                /* margin-top: -20%;
             margin-bottom: 20%; */
-            font-weight: bold;
-            font-size: large;
-            z-index: 2;
-        }
-
-        .modal-content {
-            /* 半透明にする */
-            background: #f3f3f387;
-            opacity: 1;
-            /* background-color: #fefefe; */
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 60%;
-            max-width: 300px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-
-        .close-button {
-            color: #040404;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            display: none;
-        }
-
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .loader {
-            border: 16px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 16px solid #B22222;
-            width: 120px;
-            height: 120px;
-            animation: spin 2s linear infinite;
-            margin: 0 auto;
-        }
-
-        .footer {
-            /* position: fixed; */
-            margin: 0;
-            padding-top: 2px;
-            padding-bottom: 2px;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            background-color: #333;
-            color: white;
-            text-align: center;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
+                font-weight: bold;
+                font-size: large;
+                z-index: 2;
             }
 
-            100% {
-                transform: rotate(360deg);
+            .modal-content {
+                /* 半透明にする */
+                background: #f3f3f387;
+                opacity: 1;
+                /* background-color: #fefefe; */
+                margin: 15% auto;
+                padding: 20px;
+                border: 1px solid #888;
+                width: 60%;
+                max-width: 300px;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+                text-align: center;
             }
-        }
+
+            .close-button {
+                color: #040404;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+                display: none;
+            }
+
+            .close-button:hover,
+            .close-button:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .loader {
+                border: 16px solid #f3f3f3;
+                border-radius: 50%;
+                border-top: 16px solid #B22222;
+                width: 120px;
+                height: 120px;
+                animation: spin 2s linear infinite;
+                margin: 0 auto;
+            }
+
+            .footer {
+                /* position: fixed; */
+                margin: 0;
+                padding-top: 2px;
+                padding-bottom: 2px;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                background-color: #333;
+                color: white;
+                text-align: center;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
     </style>
 </head>
 
@@ -194,14 +201,15 @@
     </div>
 
     <!-- 操作方法を説明するコーナー -->
-    <div style="margin-top: 3px; text-align: center;background-color: #fcdada; padding: 10px;">
+    <div style="margin-top: 3px; text-align: center;background-color: #fdcbcb; padding: 10px;">
         <!-- POPでフラットなデザイン -->
         <h2 style="padding:10px; background-color: #B22222; color: white; border: radius 50vh; margin-top: 0;">操作方法</h2>
         <p>1.検索ボックスに調べたい言葉を入力し、検索ボタンを押してください</p>
         <p>2.検索結果を待つ</p>
         <p>3.検索結果はネットワーク図で表示されます</p>
         <p>4.グラフは自由に拡大・縮小・つまんで引っ張ることができます(vis.js)</p>
-        <div style="display: flex; margin-top: 20px; background-color: #fff; flex-wrap: wrap; justify-content: center; max-width: 1105px; margin: 0 auto;">
+        <div
+            style="display: flex; margin-top: 20px; background-color: #fff; flex-wrap: wrap; justify-content: center; max-width: 1105px; margin: 0 auto;">
             <div id="mynetwork"
                 style="width: 100vw; height: 80vh; float: left; margin: 0px; max-width: 800px; max-height: 800px;">
             </div>
@@ -301,12 +309,19 @@
                 id: 'center',
                 label: '山陽本線',
                 title: '山陽本線',
-                font: { size: 40 },
+                font: {size: 40 },
                 wikipedia_url: 'https://ja.wikipedia.org/wiki/山陽本線',
                 google_scholar_url: 'https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=山陽本線',
-                color: 'lightblue',
-                border: 'blue',
-                hover: 'white'
+                // color: '#B22222',
+                color: {
+                    background: '#f79e9e',
+                    border: 'black',
+                },
+                hover: {
+                    background: 'white',
+                    border: 'black',
+                },
+                // border: 'blue',
             },
             {
                 id: 'subject_1位',
@@ -616,42 +631,42 @@
 
         var network = new vis.Network(container, data, options);
 
-       // ノードの詳細を表示する関数
-       function displayNodeDetails(nodeId) {
-                var node = data.nodes.get(nodeId);
-                if (node) {
-                    if (node.wikipedia_url) {
-                        document.getElementById('node-details').innerHTML = '<p>ID: ' + node.id + '</p>' +
-                            '<p>Label: ' + node.label + '</p>' +
-                            '<p>Title: ' + node.title + '</p>' + '<a href="' + node.wikipedia_url + '" target="_blank">Wikipedia</a>' + '<br>' + '<a href="' + node.google_scholar_url + '" target="_blank" onclick="alert(' + node.google_scholar_url + ')">Google Scholar</a>';
-                    } else {
-                        document.getElementById('node-details').innerHTML = '<p>ID: ' + node.id + '</p>' +
-                            '<p>Label: ' + node.label + '</p>' +
-                            '<p>Title: ' + node.title + '</p>';
-                    }
+        // ノードの詳細を表示する関数
+        function displayNodeDetails(nodeId) {
+            var node = data.nodes.get(nodeId);
+            if (node) {
+                if (node.wikipedia_url) {
+                    document.getElementById('node-details').innerHTML = '<p>ID: ' + node.id + '</p>' +
+                        '<p>Label: ' + node.label + '</p>' +
+                        '<p>Title: ' + node.title + '</p>' + '<a href="' + node.wikipedia_url + '" target="_blank">Wikipedia</a>' + '<br>' + '<a href="' + node.google_scholar_url + '" target="_blank" onclick="alert(' + node.google_scholar_url + ')">Google Scholar</a>';
                 } else {
-                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+                    document.getElementById('node-details').innerHTML = '<p>ID: ' + node.id + '</p>' +
+                        '<p>Label: ' + node.label + '</p>' +
+                        '<p>Title: ' + node.title + '</p>';
                 }
+            } else {
+                document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
             }
-            // ノードクリックイベント
-            network.on("click", function (params) {
-                if (params.nodes.length > 0) {
-                    var nodeId = params.nodes[0];
-                    displayNodeDetails(nodeId);
-                } else {
-                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
-                }
-            });
-            // ノードドラッグイベント
-            network.on("dragging", function (params) {
-                if (params.nodes.length > 0) {
-                    var nodeId = params.nodes[0];
-                    displayNodeDetails(nodeId);
-                } else {
-                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
-                }
-            });
-        
+        }
+        // ノードクリックイベント
+        network.on("click", function (params) {
+            if (params.nodes.length > 0) {
+                var nodeId = params.nodes[0];
+                displayNodeDetails(nodeId);
+            } else {
+                document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+            }
+        });
+        // ノードドラッグイベント
+        network.on("dragging", function (params) {
+            if (params.nodes.length > 0) {
+                var nodeId = params.nodes[0];
+                displayNodeDetails(nodeId);
+            } else {
+                document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+            }
+        });
+
     </script>
 </body>
 
