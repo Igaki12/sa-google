@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>SPARQL Query Interface</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style type="text/css">
         #mynetwork {
@@ -28,26 +27,12 @@
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
     <style>
-        body {
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: large;
-            background-color: #fdcbcb;
-        }
-        .title-logo {
-            max-width: 70vw;
-            margin: 20px 0;
-        }
-
         .search-box {
             display: flex;
-            margin: 0;
-            justify-content: center;
         }
 
         .search-box input[type="text"] {
-            max-width: 300px;
+            width: 400px;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
@@ -57,7 +42,7 @@
         .search-box input[type="submit"] {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #B22222;
+            background-color: #4285F4;
             color: white;
             border: none;
             border-radius: 0 4px 4px 0;
@@ -71,7 +56,15 @@
 </head>
 
 <body>
-    <img src="../static/title2.png" alt="PBL_assistant" class="title-logo">
+
+
+
+    <h1>SPARQL Query Interface</h1>
+    <!-- <form method="post">
+        <label for="query">SPARQL Query:</label><br>
+        <textarea id="query" name="query" rows="10" cols="100">{{ query }}</textarea><br>
+        <input type="submit" value="Run Query">
+    </form> -->
     <form method="post" class="search-box" action="/results">
         <input type="text" name="query" value="{{ query }}">
         <input type="submit" value="再検索">

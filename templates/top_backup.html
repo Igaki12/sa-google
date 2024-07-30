@@ -7,23 +7,40 @@
     <title>PBL_assistant_web</title>
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style type="text/css">
-        /* #mynetwork {
+        #mynetwork {
             width: 100vw;
-            height: 90%;
-            min-height: 60vh;
+            height: 80vh;
             float: left;
             margin: 0px;
+            max-width: 800px;
+            max-height: 800px;
         }
 
-        #node-details {
-            width: 200px;
-            height: 200px;
-            border: 1px solid lightgray;
-            float: left;
-            font-size: small;
-            padding-right: 10px;
-            padding-left: 10px;
-        } */
+        #graph-wrapper {
+            display: flex;
+            margin-top: 20px;
+            background-color: #fff;
+            flex-wrap: wrap;
+            max-width: 1105px;
+            margin: 0 auto;
+            justify-content: space-between;
+        }
+
+        #node-text-box {
+            border: 1px black solid;
+            background-color: #ffffffdd;
+            width: 300px;
+            min-height: 300px;
+        }
+
+        #node-detail-header {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            background-color: #B22222;
+            color: white;
+            margin-top: 0;
+            width: 100%;
+        }
     </style>
     <style type="text/css">
         body,
@@ -70,7 +87,7 @@
             bottom: 10%;
             /* width: 50%; */
             width: 800px;
-            max-width: 70vw;
+            max-width: 99vw;
         }
 
         .search-container {
@@ -111,30 +128,12 @@
             background-color: #45a049;
         }
 
-        .graph-content-box {
-            display: flex;
-            margin-top: 20px;
-            background-color: #fff;
-            /* flex-wrap: wrap; */
-            margin: 0 auto;
-            justify-content: center;
-        }
-
-        #mynetwork {
-            width: 80%;
-            height: 80vh;
-            float: left;
-            margin: 0px;
-            max-width: 800px;
-            max-height: 800px;
-        }
-
-        .node-detail-box {
-            border: 1px black solid;
-            background-color: #ffffffdd;
-            width: 20%;
-            min-width: 200px;
-            min-height: 300px;
+        .tutorial-header {
+            padding: 10px;
+            background-color: #B22222;
+            color: white;
+            border: radius 50vh;
+            margin-top: 0;
         }
 
         .modal {
@@ -220,51 +219,22 @@
         }
 
         /* スマホの縦画面の場合 */
-        @media (max-width: 600px) {
-            .title-logo {
-                max-width: 99vw;
-            }
-
-            .graph-content-box {
-                display: flex;
-                margin-top: 20px;
-                background-color: #fff;
-                flex-wrap: wrap;
-                max-width: 1105px;
-                margin: 0 auto;
-                justify-content: center;
-            }
-
-            #mynetwork {
-                width: 100%;
-                height: 60vh;
-                float: left;
-                margin: 0px;
-                max-height: 800px;
-            }
-
-            .node-detail-box {
-                border: 1px black solid;
-                background-color: #ffffffdd;
-                width: 20%;
-                min-height: 300px;
+        @media (max-width: 767px) {
+            body {
+                font-size: 64px;
             }
 
             .search-container input[type=text] {
-                font-size: 28px;
+                font-size: 64px;
             }
 
             .search-container input[type=submit] {
-                font-size: 24px;
+                font-size: 50px;
             }
 
             .search-container {
                 right: 20px;
                 margin-right: 0;
-            }
-
-            .node-detail-box {
-                width: 100%;
             }
         }
     </style>
@@ -284,18 +254,18 @@
     <!-- 操作方法を説明するコーナー -->
     <div style="margin-top: 3px; text-align: center;background-color: #fdcbcb; padding: 10px;">
         <!-- POPでフラットなデザイン -->
-        <h2 style="padding:10px; background-color: #B22222; color: white; border: radius 50vh; margin-top: 0;">操作方法</h2>
+        <h2 class="tutorial-header">操作方法</h2>
         <p>1.検索ボックスに調べたい言葉を入力し、検索ボタンを押してください</p>
         <p>2.検索結果を待つ</p>
         <p>3.検索結果はネットワーク図で表示されます</p>
         <p>4.グラフは自由に拡大・縮小・つまんで引っ張ることができます(vis.js)</p>
-        <div class="graph-content-box">
+        <!-- コンテンツの間をできるだけ離す -->
+        <div id="graph-wrapper">
             <div id="mynetwork">
             </div>
-            <div class="node-detail-box">
+            <div id="node-text-box">
                 <!-- POPでフラットなデザイン -->
-                <h3
-                    style="padding-top:10px; padding-bottom: 10px; background-color: #B22222; color: white; border: radius 10px; margin-top: 0; width: 100%;">
+                <h3 id="node-detail-header">
                     ノード詳細</h3>
                 <div id="node-details">気になる単語をクリックしてみてください。ここに単語の詳細について表示されます</div>
             </div>
@@ -324,7 +294,7 @@
 
     <!-- 一般的なフッター (C)2024- Happyman と文字だけ -->
     <footer class="footer">
-        <p>&copy; 2024 - Happyman Igatatsu</p>
+        <p>&copy; 2024 - Happyman</p>
     </footer>
 
 
