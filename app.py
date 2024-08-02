@@ -69,9 +69,9 @@ def results(query=query):
 
                 # もし文字数が7文字以上の場合は、ラベルには7文字までを表示する
         if len(query) > 7:
-            graph_nodes.append({"id" : "center" , "label" : query[:7]+"..." , "title" : query , "font" : {"size" : 40} , "wikipedia_url" : wikipedia_url , "google_scholar_url" : google_scholar_url , "color" : "lightblue"})
+            graph_nodes.append({"id" : "center" , "label" : query[:7]+"..." , "title" : query , "font" : {"size" : 40} , "wikipedia_url" : wikipedia_url , "google_scholar_url" : google_scholar_url , "color" : {"background" : "#f79e9e","border" : "black"}})
         else:
-            graph_nodes.append({"id" : "center" , "label" : query , "title" : query , "font" : {"size" : 40} , "wikipedia_url" : wikipedia_url , "google_scholar_url" : google_scholar_url , "color" : "lightblue","border" : "blue","hover": "white"})
+            graph_nodes.append({"id" : "center" , "label" : query , "title" : query , "font" : {"size" : 40} , "wikipedia_url" : wikipedia_url , "google_scholar_url" : google_scholar_url , "color" : {"background" : "#f79e9e","border" : "black"}})
 
     response_s1 = requests.get(SPARQL_ENDPOINT, params={
         'default-graph-uri': 'http://ja.dbpedia.org',

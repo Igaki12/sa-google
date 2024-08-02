@@ -7,23 +7,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style type="text/css">
-        #mynetwork {
-            width: 500px;
-            height: 500px;
-            border: 1px solid lightgray;
-            float: left;
-            margin: 5px;
+        .title-logo{
+            margin-top: 30px;
+            animation: rotateScale 1s ease-out forwards;
         }
 
-        #node-details {
-            width: 200px;
-            height: 200px;
-            border: 1px solid lightgray;
-            float: left;
-            font-size: small;
-            padding-right: 10px;
-            padding-left: 10px;
+        @keyframes rotateScale {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            /* 50% {
+                transform: scale(0.5) rotate(360deg);
+                opacity: 1;
+            } */
+            100% {
+                transform: scale(1) rotate(720deg);
+                opacity: 1;
+            }
         }
+        .graph-content-box {
+            display: flex;
+            /* padding: 10px; */
+            margin-top: 20px;
+            margin-right: 10px;
+            margin-left: 10px;
+            background-color: #fff;
+            /* flex-wrap: wrap; */
+            justify-content: center;
+        }
+
+        #mynetwork {
+            width: 80%;
+            height: 80vh;
+            float: left;
+            margin: 0px;
+            max-width: 800px;
+            max-height: 800px;
+        }
+
+        .node-detail-box {
+            border: 1px black solid;
+            background-color: #ffffffdd;
+            width: 20%;
+            min-width: 200px;
+            min-height: 300px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-p {
+            /* margin-top: -20%;
+            margin-bottom: 20%; */
+            font-weight: bold;
+            font-size: large;
+            z-index: 2;
+        }
+
+        .modal-content {
+            /* 半透明にする */
+            background: #f3f3f387;
+            opacity: 1;
+            /* background-color: #fefefe; */
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 350px;
+            /* max-width: 300px; */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .close-button {
+            color: #040404;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #B22222;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+
+        .footer {
+            /* position: fixed; */
+            margin: 0;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            text-align: center;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+                opacity: 0;
+            }
+
+            50% {
+                transform: rotate(180deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+            .title-logo {
+                max-width: 99vw;
+            }
+
+            .graph-content-box {
+                display: flex;
+                margin-top: 20px;
+                margin-right: 5px;
+                margin-left: 5px;
+                background-color: #fff;
+                flex-wrap: wrap;
+                max-width: 1105px;
+                justify-content: center;
+            }
+
+            #mynetwork {
+                width: 100%;
+                height: 60vh;
+                float: left;
+                margin: 0px;
+                max-height: 800px;
+            }a
+
+            .node-detail-box {
+                border: 1px black solid;
+                background-color: #ffffffdd;
+                width: 100%;
+                min-height: 300px;
+            }
+        }
+
     </style>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
@@ -34,10 +186,7 @@
             font-family: Arial, Helvetica, sans-serif;
             font-size: large;
             background-color: #fdcbcb;
-        }
-        .title-logo {
-            max-width: 70vw;
-            margin: 20px 0;
+            text-align: center;
         }
 
         .search-box {
@@ -65,25 +214,141 @@
         }
 
         .search-box input[type="submit"]:hover {
-            background-color: #357ae8;
+            background-color: #540101;
+        }
+
+        .accordion {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            /* background-color: #ffffff; */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #ccc;
+        }
+
+        .accordion-header {
+            width: 100%;
+            padding: 16px;
+            /* text-align: left; */
+            background-color: #B22222;
+            color: white;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 18px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .accordion-header:hover {
+            background-color: #660016;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background-color: white;
+            color: #333;
+            padding: 0 16px;
+            border-top: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .accordion-content p {
+            margin: 16px 0;
         }
     </style>
 </head>
 
 <body>
-    <img src="../static/title2.png" alt="PBL_assistant" class="title-logo">
+    <img class="title-logo" src="../static/title2.png" alt="title">
     <form method="post" class="search-box" action="/results">
         <input type="text" name="query" value="{{ query }}">
-        <input type="submit" value="再検索">
+        <input type="submit" value="再検索" id="openModalButton">
     </form>
+    <!-- graph_nodesが見つからないか、リストの数が1以下であるとき、「検索結果が見つかりませんでした」という警告表示を追加 -->
+     <div>
+        {% if not graph_nodes or graph_nodes|length < 2 %}
+            <h2>⚠️検索結果が見つかりませんでした。<br>他の言葉で再検索してみてください。</h2>
+        {% endif %}
+    </div>
+    <!-- おしゃれなアコーディオンで説明box -->
+    <div class="accordion">
+        <div class="accordion-item">
+            <button class="accordion-header">良い単語の選び方</button>
+            <div class="accordion-content">
+                <p>まずは、自分が知りたい情報を明確にしましょう。</p>
+                    <p><span style="font-weight: bold;" >Wikipediaに記事があるような言葉</span>を選びましょう。</p>
+                    <p>例えば、スポーツに関する情報を知りたい場合、スポーツ選手やスポーツ団体の名前を選びます。</p>
+                    <p>もっと良い単語をグラフ中に見つけたら、今度はその単語で再検索してみましょう。</p>
+                </p>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <button class="accordion-header">グラフの矢印の意味</button>
+            <div class="accordion-content">
+                <img src="../static/first_network_diagram.png" alt="first_network_diagram" style="width: 100%; padding-top: 16px;">
+                <p>Wikipediaのページには、他のページへのリンクがあります。これがグラフ中のノードとノードを結ぶ矢印に対応しています。<span style="font-weight: bold;">リンク元のページからリンク先のページの方向</span>に矢印が向いています。
+                </p>
+            </div>
+        </div>
+        <!-- <div class="accordion-item">
+            <button class="accordion-header">セクション 3</button>
+            <div class="accordion-content">
+                <p>ここにセクション3の内容が入ります。</p>
+            </div>
+        </div> -->
+    </div>
+
+    <script>
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+
+                // Close any other open content
+                document.querySelectorAll('.accordion-content').forEach(contentItem => {
+                    if (contentItem !== content) {
+                        contentItem.style.maxHeight = null;
+                    }
+                });
+
+                // Toggle the current content's max-height
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+    </script>
+     
+
 
     <!-- vis.jsによるグラフサンプル -->
-    <div style="display: flex; margin-top: 20px;">
+    <div class="graph-content-box">
         <div id="mynetwork"></div>
-        <div>
+        <div class="node-detail-box">
+            <!-- POPでフラットなデザイン -->
+            <h3
+                style="padding-top:10px; padding-bottom: 10px; background-color: #B22222; color: white; border: radius 10px; margin-top: 0; width: 100%;">
+                ノード詳細</h3>
+            <div id="node-details">気になる単語をクリックしてみてください。ここに単語の詳細について表示されます</div>
+        </div>
+        <!-- <div>
             <h3>Node Details</h3>
             <div id="node-details"></div>
-        </div>
+        </div> -->
 
     </div>
     <script type="text/javascript">
@@ -158,8 +423,59 @@
     <div id="graph_data_list" style="display: none;" >
         {{ graph_data_list }}
     </div>
+    <footer class="footer">
+        <p>&copy; 2024 - Happyman Igatatsu</p>
+    </footer>
 
-    <script type="text/javascript"></script>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="loader"></div>
+            <p class="modal-p">検索結果の準備中です<br>10秒~20秒程度かかる場合があります</p>
+        </div>
+    </div>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const modal = document.getElementById("modal");
+            const btn = document.getElementById("openModalButton");
+            const span = document.getElementsByClassName("close-button")[0];
+
+            btn.onclick = function () {
+                // モーダルをゆっくり表示させる
+                modal.style.display = "block";
+                modal.style.opacity = 0;
+                let op = 0;
+                const timer = setInterval(() => {
+                    if (op >= 1) {
+                        clearInterval(timer);
+                    }
+                    modal.style.opacity = op;
+                    op += 0.1;
+                }, 30);
+                // 20秒後に spanを表示する。 ゆっくりフェイドインさせて。
+                setTimeout(() => {
+                    span.style.display = "block";
+                    span.style.opacity = 0;
+                    let op = 0;
+                    const timer = setInterval(() => {
+                        if (op >= 1) {
+                            clearInterval(timer);
+                        }
+                        span.style.opacity = op;
+                        op += 0.1;
+                    }, 100);
+                }, 20000);
+
+            }
+
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
+        });
+    </script>
+
+    <!-- <script type="text/javascript"></script>
 
     // graph_data_list = {"nodes": [ { "id" : "center" , "label" : "姫路城" , "title" : "This is center node" , "font" :
     {"size" : 50} }] , "edges" : [ { "from" : "center" , "to" : 1 , "arrows" : "to , middle" } ]}
@@ -170,9 +486,9 @@
     <h2>graph_edges</h2>
     <p>{{ graph_edges }}</p>
     <h2>Graph_name_list</h2>
-    <p>{{ graph_name_list }}</p>
+    <p>{{ graph_name_list }}</p> -->
     <!-- ['2022年の阪神タイガース', 'かとうれいこ', '原田伸郎', '向井寛', '田中次紀', 'ティーチングプロ', 'レッスンプロ', 'ティーチングプロ', 'レッスンプロ', 'ゴルフ', 'ゴルファー', 'プロフェッショナル', 'ゴルフ', 'ゴルファー', 'プロフェッショナル', 'ゴルフ', 'ゴルファー', 'プロフェッショナル', 'Q110011391', '1969年', '1951年の日本', 'Q11415883', 'Q108777099', 'せんだるか', '松本一誠', '大西翔太', '粕谷正美', 'クオリファイングトーナメント', '各国のゴルファー', 'スポーツ関連の職業', 'ゴルファー一覧', '日本プロゴルフ選手権大会', 'Reflist', 'ホールインワン', 'プロゴルファー', 'プロフェッショナル（英: professional）は、短縮形で「pro プロ」とも言うが、次のような意味がある。 まずは形容詞的用法が根底にあり、 \n* （元々の意味）「professionに関連する」あるいは「professionに属する」という意味である。なおprofessionとは、賃金を支払われるなりわい（＝職業）のことであるが、その中でもとくにトレーニングを要し何らかの資格を要するようななりわいを指す。つまりprofessionとは、一般に「専門的な仕事」と表現されるもののことである。 \n* 「職業的な人にふさわしい」という意味で、能力が高く、技に優れ、（その仕事に）確かさがある、ということ。 \n* （アマチュアとは異なって）「主たる収入を得るために特定の分野に従事している（人）」 名詞的用法としては、 \n* profession（＝「専門的な仕事」）に従事している人や、専門的な仕事で評価を得ている人。 \n* 特定の分野に従事している人で、その中でも特に、（「ひまつぶし」としてではなく）主たる収入を得る生業（なりわい）としてそれに従事している人。 \n* 特定の活動に関して能力が高く、技能に優れる人。 対義語はアマチュア（英：Amateur）。 professionalの類義語には「英: expert エキスパート」（熟練者）や、英: specialist スペシャリストがある。'] -->
-    <table border="1">
+    <!-- <table border="1">
         <tr>
             <th>index</th>
             <th>graph_name</th>
@@ -188,7 +504,7 @@
     <h3>1st Node List for Subject</h3>
     <p>{{ node_list_1st_s }}</p>
     <h3>1st Node List for Object</h3>
-    <p>{{ node_list_1st_o }}</p>
+    <p>{{ node_list_1st_o }}</p> -->
 
 </body>
 
