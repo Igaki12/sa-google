@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style type="text/css">
-        .title-logo{
+        .title-logo {
             margin-top: 30px;
             animation: rotateScale 1s ease-out forwards;
         }
@@ -17,6 +17,7 @@
                 transform: scale(0) rotate(0deg);
                 opacity: 0;
             }
+
             /* 50% {
                 transform: scale(0.5) rotate(360deg);
                 opacity: 1;
@@ -26,6 +27,7 @@
                 opacity: 1;
             }
         }
+
         .graph-content-box {
             display: flex;
             /* padding: 10px; */
@@ -76,7 +78,7 @@
 
         .modal-content {
             /* 半透明にする */
-            background: #f3f3f387;
+            background: #f3f3f3;
             opacity: 1;
             /* background-color: #fefefe; */
             margin: 15% auto;
@@ -126,6 +128,35 @@
             text-align: center;
         }
 
+        .slider-box {
+            margin: 10px;
+        }
+
+        .slider-box label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* .slider-box input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .slider-box input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #B22222;
+            cursor: pointer;
+        }
+        .slider-box input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(to right, #f9c2c2 50%, #B22222 50%);
+            border-radius: 5px;
+        } */
+
         @keyframes spin {
             0% {
                 transform: rotate(0deg);
@@ -154,6 +185,7 @@
                 margin-top: 20px;
                 margin-right: 5px;
                 margin-left: 5px;
+                margin-bottom: auto;
                 background-color: #fff;
                 flex-wrap: wrap;
                 max-width: 1105px;
@@ -166,7 +198,7 @@
                 float: left;
                 margin: 0px;
                 max-height: 800px;
-            }a
+            }
 
             .node-detail-box {
                 border: 1px black solid;
@@ -175,7 +207,6 @@
                 min-height: 300px;
             }
         }
-
     </style>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
@@ -276,10 +307,9 @@
         <input type="submit" value="再検索" id="openModalButton">
     </form>
     <!-- graph_nodesが見つからないか、リストの数が1以下であるとき、「検索結果が見つかりませんでした」という警告表示を追加 -->
-     <div>
-        {% if not graph_nodes or graph_nodes|length < 2 %}
-            <h2>⚠️検索結果が見つかりませんでした。<br>他の言葉で再検索してみてください。</h2>
-        {% endif %}
+    <div>
+        {% if not graph_nodes or graph_nodes|length < 2 %} <h3>⚠️検索結果が見つかりませんでした。<br>他の言葉で再検索してみてください。</h3>
+            {% endif %}
     </div>
     <!-- おしゃれなアコーディオンで説明box -->
     <div class="accordion">
@@ -287,26 +317,44 @@
             <button class="accordion-header">良い単語の選び方</button>
             <div class="accordion-content">
                 <p>まずは、自分が知りたい情報を明確にしましょう。</p>
-                    <p><span style="font-weight: bold;" >Wikipediaに記事があるような言葉</span>を選びましょう。</p>
-                    <p>例えば、スポーツに関する情報を知りたい場合、スポーツ選手やスポーツ団体の名前を選びます。</p>
-                    <p>もっと良い単語をグラフ中に見つけたら、今度はその単語で再検索してみましょう。</p>
+                <p><span style="font-weight: bold;">Wikipediaに記事があるような言葉</span>を選びましょう。</p>
+                <p>例えば、スポーツに関する情報を知りたい場合、スポーツ選手やスポーツ団体の名前を選びます。</p>
+                <p>もっと良い単語をグラフ中に見つけたら、今度はその単語で再検索してみましょう。</p>
                 </p>
             </div>
         </div>
         <div class="accordion-item">
             <button class="accordion-header">グラフの矢印の意味</button>
             <div class="accordion-content">
-                <img src="../static/first_network_diagram.png" alt="first_network_diagram" style="width: 100%; padding-top: 16px;">
-                <p>Wikipediaのページには、他のページへのリンクがあります。これがグラフ中のノードとノードを結ぶ矢印に対応しています。<span style="font-weight: bold;">リンク元のページからリンク先のページの方向</span>に矢印が向いています。
+                <img src="../static/first_network_diagram.png" alt="first_network_diagram"
+                    style="width: 100%; padding-top: 16px;">
+                <p>Wikipediaのページには、他のページへのリンクがあります。これがグラフ中のノードとノードを結ぶ矢印に対応しています。<span
+                        style="font-weight: bold;">リンク元のページからリンク先のページの方向</span>に矢印が向いています。
                 </p>
             </div>
         </div>
-        <!-- <div class="accordion-item">
-            <button class="accordion-header">セクション 3</button>
+        <div class="accordion-item">
+            <button class="accordion-header">グラフの詳細設定</button>
             <div class="accordion-content">
-                <p>ここにセクション3の内容が入ります。</p>
+                <!-- 4箇所で停止するスライダー -->
+                <div class="slider-box">
+                    <label for="node-size">文字の大きさ</label>
+                    <input type="range" id="node-size" name="node-size" min="10" max="40" value="20">
+                    <output id="node-size-value">20</output>
+                </div>
+                <div class="slider-box">
+                    <label for="node-counts-depth1">ノードの個数(1段階目)</label>
+                    <input type="range" id="node-counts-depth1" name="node-counts-depth1" min="4" max="10" value="10">
+                    <output id="node-counts-depth1-value">10</output>
+                </div>
+                <div class="slider-box">
+                    <label for="node-counts-depth2">ノードの個数(2段階目)</label>
+                    <input type="range" id="node-counts-depth2" name="node-counts-depth2" min="0" max="4" value="1">
+                    <output id="node-counts-depth2-value">1</output>
+                </div>
+                <p></p>
             </div>
-        </div> -->
+        </div>
     </div>
 
     <script>
@@ -332,7 +380,11 @@
             });
         });
     </script>
-     
+
+    <script>
+
+    </script>
+
 
 
     <!-- vis.jsによるグラフサンプル -->
@@ -352,55 +404,117 @@
 
     </div>
     <script type="text/javascript">
-        // コンテンツを全て読み込んだ後で、graph_nodes, graph_edgesを取得する
-        document.addEventListener('DOMContentLoaded',    async function () {
-            // alert("test");
+        // 設定を反映したグラフを描画する
+        async function drawGraph() {
             const graph_nodes = document.getElementById('graph_nodes').textContent;
             const graph_edges = document.getElementById('graph_edges').textContent;
-            // alert("graph_nodes :" + graph_nodes);
-            // graph_nodes :[{'id': 'subject_1位', 'label': '2022年の阪...', 'title': '2022年の阪神タイガース', 'font': {'size': 50}}, {'id': 'subject_2位', 'label': 'かとうれいこ', 'title': 'かとうれいこ', 'font': {'size': 50}}, {'id': 'subject_3位', 'label': '原田伸郎', 'title': '原田伸郎', 'font': {'size': 50}}, {'id': 'subject_4位', 'label': '向井寛', 'title': '向井寛', 'font': {'size': 50}}, {'id': 'subject_5位', 'label': '田中次紀', 'title': '田中次紀', 'font': {'size': 50}}, {'id': 'subject_6位', 'label': 'ティーチングプ...', 'title': 'ティーチングプロ', 'font': {'size': 50}}, {'id': 'subject_7位', 'label': 'レッスンプロ', 'title': 'レッスンプロ', 'font': {'size': 50}}, {'id': 'object_1位', 'label': 'ゴルフ', 'title': 'ゴルフ', 'font': {'size': 50}}, {'id': 'object_2位', 'label': 'ゴルファー', 'title': 'ゴルファー', 'font': {'size': 50}}, {'id': 'object_3位', 'label': 'プロフェッショ...', 'title': 'プロフェッショナル', 'font': {'size': 50}}]
-            // alert("graph_nodes_replace() :" + graph_nodes.replace(/'/g, '"'));
-            // graph_nodes_replace() :[{"id": "subject_1位", "label": "かとうれいこ", "title": "かとうれいこ", "font": {"size": 50}}, {"id": "subject_2位", "label": "原田伸郎", "title": "原田伸郎", "font": {"size": 50}}, {"id": "subject_3位", "label": "向井寛", "title": "向井寛", "font": {"size": 50}}, {"id": "subject_4位", "label": "田中次紀", "title": "田中次紀", "font": {"size": 50}}, {"id": "subject_5位", "label": "2022年の阪...", "title": "2022年の阪神タイガース", "font": {"size": 50}}, {"id": "subject_6位", "label": "ティーチングプ...", "title": "ティーチングプロ", "font": {"size": 50}}, {"id": "subject_7位", "label": "レッスンプロ", "title": "レッスンプロ", "font": {"size": 50}}, {"id": "object_1位", "label": "ゴルフ", "title": "ゴルフ", "font": {"size": 50}}, {"id": "object_2位", "label": "ゴルファー", "title": "ゴルファー", "font": {"size": 50}}, {"id": "object_3位", "label": "プロフェッショ...", "title": "プロフェッショナル", "font": {"size": 50}}]
-            // alert("JSON.parse(graph_nodes) :" + JSON.parse(graph_nodes.replace(/'/g, '"')));
-            // JSON.parse(graph_nodes) :[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
             const container = document.getElementById('mynetwork');
-            var data = {
-                nodes: new vis.DataSet(JSON.parse(graph_nodes.replace(/'/g, '"'))),
-                edges: new vis.DataSet(JSON.parse(graph_edges.replace(/'/g, '"'))),
-            };
-            var options = {
-            edges: {
-                arrows: {
-                    to: { enabled: true, scaleFactor: 1 }
-                }
-            }
-        };
+            // ノードの大きさを変更する
+            const nodeSizeSlider = document.getElementById('node-size');
+            const nodeSize = parseInt(nodeSizeSlider.value);
+            // 1段階目のノードの数を変更する(減らす)
+            const nodeCountsDepth1Slider = document.getElementById('node-counts-depth1');
+            const nodeCountsDepth1 = parseInt(nodeCountsDepth1Slider.value);
+            // 2段階目のノードの数を変更する(減らす)
+            const nodeCountsDepth2Slider = document.getElementById('node-counts-depth2');
+            const nodeCountsDepth2 = parseInt(nodeCountsDepth2Slider.value);
 
-            var network = new vis.Network(container, data, options);
+            const input_data = {
+                nodes: JSON.parse(graph_nodes.replace(/'/g, '"')),
+                edges: JSON.parse(graph_edges.replace(/'/g, '"')),
+            };
+
+            // リンク先・リンク元のノードがnodeCounts個以下になるように減らして出力
+            number_of_nodesDepth1_subject = 0;
+            number_of_nodesDepth1_object = 0;
+            // 2段階目のノードの数は、1段階目のノードの数それぞれについて分けてカウントする
+            number_of_nodesDepth2_subject = Array(100).fill(0);
+            number_of_nodesDepth2_object = Array(100).fill(0);
+            const output_data = {
+                nodes: [],
+                edges: []
+            };
+
+            input_data.nodes.forEach(async function (node) {
+                if (node.id === '中央') {
+                    output_data.nodes.push(node);
+                }
+                // ノードの大きさを変更する
+                if (node.id !== '中央'){
+                    node.font.size = nodeSize;
+                }
+                if (node.id.includes('リンク先') && !node.id.includes('位の')) {
+                    if (number_of_nodesDepth1_object < nodeCountsDepth1) {
+                        number_of_nodesDepth1_object += 1;
+                        output_data.nodes.push(node);
+                    }
+                } else if (node.id.includes('リンク元') && !node.id.includes('位の')) {
+                    if (number_of_nodesDepth1_subject < nodeCountsDepth1) {
+                        number_of_nodesDepth1_subject += 1;
+                        output_data.nodes.push(node);
+                    }
+                }
+            });
+            // ノードの選択(2段階目)
+            input_data.nodes.forEach(async function (node) {
+                if (node.id.includes('リンク先') && node.id.includes('位の')) {
+                    // 1段階目が存在することを確認
+                    if (output_data.nodes.find(exist_node => exist_node.id.split('位')[0] === node.id.split('位')[0]) && number_of_nodesDepth2_object[parseInt(node.id.split('_')[1].split('位')[0])] < nodeCountsDepth2) {
+                            number_of_nodesDepth2_object[parseInt(node.id.split('_')[1].split('位')[0])] += 1;
+                            output_data.nodes.push(node);
+                    }
+                }else if (node.id.includes('リンク元') && node.id.includes('位の')) {
+                    // 1段階目が存在することを確認
+                    if (output_data.nodes.find(exist_node => exist_node.id.split('位')[0] === node.id.split('位')[0]) && number_of_nodesDepth2_subject[parseInt(node.id.split('_')[1].split('位')[0])] < nodeCountsDepth2) {
+                            number_of_nodesDepth2_subject[parseInt(node.id.split('_')[1].split('位')[0])] += 1;
+                            output_data.nodes.push(node);
+                    }
+                }
+            });
+
+            input_data.edges.forEach(function (edge) {
+                console.log(edge);
+                // リンク先・リンク元のノードが存在する場合のみエッジを追加
+                if (edge && output_data.nodes.find(node => node.id === edge.from) && output_data.nodes.find(node => node.id === edge.to)) {
+                    // console.log(edge);
+                    output_data.edges.push(edge);
+                }
+            });
+            var options = {
+                edges: {
+                    arrows: {
+                        to: { enabled: true, scaleFactor: 1 }
+                    }
+                }
+            };
+            var network = new vis.Network(container, output_data, options);
+            network.setData(output_data);
             // ノードの詳細を表示する関数
             function displayNodeDetails(nodeId) {
-                var node = data.nodes.get(nodeId);
+                // var node = data.nodes.get(nodeId);
+                var node = output_data.nodes.find(node => node.id === nodeId);
                 if (node) {
                     if (node.wikipedia_url) {
                         document.getElementById('node-details').innerHTML = '<p>ID: ' + node.id + '</p>' +
-                            '<p>Label: ' + node.label + '</p>' +
-                            '<p>Title: ' + node.title + '</p>' + '<a href="' + node.wikipedia_url + '" target="_blank">Wikipedia</a>' + '<br>' + '<a href="' + node.google_scholar_url + '" target="_blank" onclick="alert(' + node.google_scholar_url + ')">Google Scholar</a>';
+                            '<p>ラベル: ' + node.label + '</p>' +
+                            '<p>タイトル: ' + node.title + '</p>' + '<a href="' + node.wikipedia_url + '" target="_blank">Wikipedia</a>' + '<br>' + '<a href="' + node.google_scholar_url + '" target="_blank" onclick="alert(' + node.google_scholar_url + ')">Google Scholar</a>';
                     } else {
                         document.getElementById('node-details').innerHTML = '<p>ID: ' + node.id + '</p>' +
-                            '<p>Label: ' + node.label + '</p>' +
-                            '<p>Title: ' + node.title + '</p>';
+                            '<p>ラベル: ' + node.label + '</p>' +
+                            '<p>タイトル: ' + node.title + '</p>';
                     }
                 } else {
-                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+                    document.getElementById('node-details').innerHTML = '<p>気になる単語をクリックしてみてください。ここに単語の詳細について表示されます</p>';
                 }
             }
+
             // ノードクリックイベント
             network.on("click", function (params) {
                 if (params.nodes.length > 0) {
                     var nodeId = params.nodes[0];
                     displayNodeDetails(nodeId);
                 } else {
-                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+                    document.getElementById('node-details').innerHTML = '<p>気になる単語をクリックしてみてください。ここに単語の詳細について表示されます</p>';
                 }
             });
             // ノードドラッグイベント
@@ -409,8 +523,39 @@
                     var nodeId = params.nodes[0];
                     displayNodeDetails(nodeId);
                 } else {
-                    document.getElementById('node-details').innerHTML = '<p>No node selected.</p>';
+                    document.getElementById('node-details').innerHTML = '<p>気になる単語をクリックしてみてください。ここに単語の詳細について表示されます</p>';
                 }
+            });
+            
+
+            // graph_nodes :[{'id': 'リンク先_1位', 'label': '2022年の阪...', 'title': '2022年の阪神タイガース', 'font': {'size': 50}}, {'id': 'リンク先_2位', 'label': 'かとうれいこ', 'title': 'かとうれいこ', 'font': {'size': 50}}, {'id': 'リンク先_3位', 'label': '原田伸郎', 'title': '原田伸郎', 'font': {'size': 50}}, {'id': 'リンク先_4位', 'label': '向井寛', 'title': '向井寛', 'font': {'size': 50}}, {'id': 'リンク先_5位', 'label': '田中次紀', 'title': '田中次紀', 'font': {'size': 50}}, {'id': 'リンク先_6位', 'label': 'ティーチングプ...', 'title': 'ティーチングプロ', 'font': {'size': 50}}, {'id': 'リンク先_7位', 'label': 'レッスンプロ', 'title': 'レッスンプロ', 'font': {'size': 50}}, {'id': 'リンク元_1位', 'label': 'ゴルフ', 'title': 'ゴルフ', 'font': {'size': 50}}, {'id': 'リンク元_2位', 'label': 'ゴルファー', 'title': 'ゴルファー', 'font': {'size': 50}}, {'id': 'リンク元_3位', 'label': 'プロフェッショ...', 'title': 'プロフェッショナル', 'font': {'size': 50}}]
+            // alert("graph_nodes_replace() :" + graph_nodes.replace(/'/g, '"'));
+            // graph_nodes_replace() :[{"id": "リンク先_1位", "label": "かとうれいこ", "title": "かとうれいこ", "font": {"size": 50}}, {"id": "リンク先_2位", "label": "原田伸郎", "title": "原田伸郎", "font": {"size": 50}}, {"id": "リンク先_3位", "label": "向井寛", "title": "向井寛", "font": {"size": 50}}, {"id": "リンク先_4位", "label": "田中次紀", "title": "田中次紀", "font": {"size": 50}}, {"id": "リンク先_5位", "label": "2022年の阪...", "title": "2022年の阪神タイガース", "font": {"size": 50}}, {"id": "リンク先_6位", "label": "ティーチングプ...", "title": "ティーチングプロ", "font": {"size": 50}}, {"id": "リンク先_7位", "label": "レッスンプロ", "title": "レッスンプロ", "font": {"size": 50}}, {"id": "リンク元_1位", "label": "ゴルフ", "title": "ゴルフ", "font": {"size": 50}}, {"id": "リンク元_2位", "label": "ゴルファー", "title": "ゴルファー", "font": {"size": 50}}, {"id": "リンク元_3位", "label": "プロフェッショ...", "title": "プロフェッショナル", "font": {"size": 50}}]
+
+
+
+        }
+
+        // コンテンツを全て読み込んだ後で、graph_nodes, graph_edgesを取得する
+        document.addEventListener('DOMContentLoaded', async function () {
+            await drawGraph();
+            const nodeSizeSlider = document.getElementById('node-size');
+            const nodeSizeValue = document.getElementById('node-size-value');
+            nodeSizeSlider.addEventListener('input', function () {
+                nodeSizeValue.textContent = nodeSizeSlider.value;
+                drawGraph();
+            });
+            const nodeCountsDepth1Slider = document.getElementById('node-counts-depth1');
+            const nodeCountsDepth1Value = document.getElementById('node-counts-depth1-value');
+            nodeCountsDepth1Slider.addEventListener('input', function () {
+                nodeCountsDepth1Value.textContent = nodeCountsDepth1Slider.value;
+                drawGraph();
+            });
+            const nodeCountsDepth2Value = document.getElementById('node-counts-depth2-value');
+            const nodeCountsDepth2Slider = document.getElementById('node-counts-depth2');
+            nodeCountsDepth2Slider.addEventListener('input', function () {
+                nodeCountsDepth2Value.textContent = nodeCountsDepth2Slider.value;
+                drawGraph();
             });
         });
 
@@ -420,7 +565,7 @@
     <div id="graph_nodes" style="display: none;">{{ graph_nodes }}</div>
     <div id="graph_edges" style="display: none;">{{ graph_edges }}</div>
 
-    <div id="graph_data_list" style="display: none;" >
+    <div id="graph_data_list" style="display: none;">
         {{ graph_data_list }}
     </div>
     <footer class="footer">
@@ -477,8 +622,8 @@
 
     <!-- <script type="text/javascript"></script>
 
-    // graph_data_list = {"nodes": [ { "id" : "center" , "label" : "姫路城" , "title" : "This is center node" , "font" :
-    {"size" : 50} }] , "edges" : [ { "from" : "center" , "to" : 1 , "arrows" : "to , middle" } ]}
+    // graph_data_list = {"nodes": [ { "id" : "中央" , "label" : "姫路城" , "title" : "This is center node" , "font" :
+    {"size" : 50} }] , "edges" : [ { "from" : "中央" , "to" : 1 , "arrows" : "to , middle" } ]}
 
 
     <h2>Graph_node_list</h2>
@@ -488,23 +633,6 @@
     <h2>Graph_name_list</h2>
     <p>{{ graph_name_list }}</p> -->
     <!-- ['2022年の阪神タイガース', 'かとうれいこ', '原田伸郎', '向井寛', '田中次紀', 'ティーチングプロ', 'レッスンプロ', 'ティーチングプロ', 'レッスンプロ', 'ゴルフ', 'ゴルファー', 'プロフェッショナル', 'ゴルフ', 'ゴルファー', 'プロフェッショナル', 'ゴルフ', 'ゴルファー', 'プロフェッショナル', 'Q110011391', '1969年', '1951年の日本', 'Q11415883', 'Q108777099', 'せんだるか', '松本一誠', '大西翔太', '粕谷正美', 'クオリファイングトーナメント', '各国のゴルファー', 'スポーツ関連の職業', 'ゴルファー一覧', '日本プロゴルフ選手権大会', 'Reflist', 'ホールインワン', 'プロゴルファー', 'プロフェッショナル（英: professional）は、短縮形で「pro プロ」とも言うが、次のような意味がある。 まずは形容詞的用法が根底にあり、 \n* （元々の意味）「professionに関連する」あるいは「professionに属する」という意味である。なおprofessionとは、賃金を支払われるなりわい（＝職業）のことであるが、その中でもとくにトレーニングを要し何らかの資格を要するようななりわいを指す。つまりprofessionとは、一般に「専門的な仕事」と表現されるもののことである。 \n* 「職業的な人にふさわしい」という意味で、能力が高く、技に優れ、（その仕事に）確かさがある、ということ。 \n* （アマチュアとは異なって）「主たる収入を得るために特定の分野に従事している（人）」 名詞的用法としては、 \n* profession（＝「専門的な仕事」）に従事している人や、専門的な仕事で評価を得ている人。 \n* 特定の分野に従事している人で、その中でも特に、（「ひまつぶし」としてではなく）主たる収入を得る生業（なりわい）としてそれに従事している人。 \n* 特定の活動に関して能力が高く、技能に優れる人。 対義語はアマチュア（英：Amateur）。 professionalの類義語には「英: expert エキスパート」（熟練者）や、英: specialist スペシャリストがある。'] -->
-    <!-- <table border="1">
-        <tr>
-            <th>index</th>
-            <th>graph_name</th>
-        </tr>
-        {% for graph_name in graph_name_list %}
-        <tr>
-            <td>{{ loop.index0 }}</td>
-            <td>{{ graph_name }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <h3>1st Node List for Subject</h3>
-    <p>{{ node_list_1st_s }}</p>
-    <h3>1st Node List for Object</h3>
-    <p>{{ node_list_1st_o }}</p> -->
 
 </body>
 

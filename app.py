@@ -11,8 +11,8 @@ app.debug = True
 SPARQL_ENDPOINT = "https://ja.dbpedia.org/sparql"
 query = "東京都"
 # { id:"center", label: '姫路城', title: 'This is center node' ,font: {size: 50}},
-#             { from: "center", to: 1, arrows: 'to , middle' },
-# graph_data_list = {"nodes": [ { "id" : "center" , "label" : "姫路城" , "title" : "This is center node" , "font" : {"size" : 50} }] , "edges" : [ { "from" : "center" , "to" : 1 , "arrows" : "to , middle" } ]}
+#             { from: "中央", to: 1, arrows: 'to , middle' },
+# graph_data_list = {"nodes": [ { "id" : "中央" , "label" : "姫路城" , "title" : "This is center node" , "font" : {"size" : 50} }] , "edges" : [ { "from" : "中央" , "to" : 1 , "arrows" : "to , middle" } ]}
 
 
 
@@ -69,9 +69,9 @@ def results(query=query):
 
                 # もし文字数が7文字以上の場合は、ラベルには7文字までを表示する
         if len(query) > 7:
-            graph_nodes.append({"id" : "center" , "label" : query[:7]+"..." , "title" : query , "font" : {"size" : 40} , "wikipedia_url" : wikipedia_url , "google_scholar_url" : google_scholar_url , "color" : {"background" : "#f79e9e","border" : "black"}})
+            graph_nodes.append({"id" : "中央" , "label" : query[:7]+"..." , "title" : query , "font" : {"size" : 50} , "wikipedia_url" : wikipedia_url , "google_scholar_url" : google_scholar_url , "color" : {"background" : "#f79e9e","border" : "black"}})
         else:
-            graph_nodes.append({"id" : "center" , "label" : query , "title" : query , "font" : {"size" : 40} , "wikipedia_url" : wikipedia_url , "google_scholar_url" : google_scholar_url , "color" : {"background" : "#f79e9e","border" : "black"}})
+            graph_nodes.append({"id" : "中央" , "label" : query , "title" : query , "font" : {"size" : 50} , "wikipedia_url" : wikipedia_url , "google_scholar_url" : google_scholar_url , "color" : {"background" : "#f79e9e","border" : "black"}})
 
     response_s1 = requests.get(SPARQL_ENDPOINT, params={
         'default-graph-uri': 'http://ja.dbpedia.org',
@@ -153,7 +153,7 @@ def results(query=query):
         # for node in node_list_1st_s:
         for i in range(len(node_list_1st_s)):
             graph_name_list.append(node_list_1st_s[i]["name"])
-            new_node_id = "subject_" + str(i+1) + "位"
+            new_node_id = "リンク先_" + str(i+1) + "位"
             new_node_label = node_list_1st_s[i]["name"]
             new_node_title = node_list_1st_s[i]["name"]
             # もし7文字以上なら、7文字までに減らす。余分な 部分をカットする。
@@ -167,10 +167,10 @@ def results(query=query):
                 graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}, "wikipedia_url" : "https://ja.wikipedia.org/wiki/" + new_node_title , "google_scholar_url" : "https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=" + new_node_title + "AND"  + query,"color" : "lightblue"})
                 # もし一つ前のnodeも追加されているのなら矢印のないエッジで、それぞれのnode間も結ぶ
                 # { from: 1, to: 2, arrows: { to: { enabled: false } } },
-                # if i > 0 and "subject_" + str(i) + "位" in [node["id"] for node in graph_nodes]:
-                #     graph_edges.append({"from" : "subject_" + str(i) + "位" , "to" : new_node_id , "arrows" : {"to" : {"enabled" : "false"}}})
+                # if i > 0 and "リンク先_" + str(i) + "位" in [node["id"] for node in graph_nodes]:
+                #     graph_edges.append({"from" : "リンク先_" + str(i) + "位" , "to" : new_node_id , "arrows" : {"to" : {"enabled" : "false"}}})
 
-            graph_edges.append({"from" : "center" , "to" : new_node_id , "arrows" : "to , middle"})
+            graph_edges.append({"from" : "中央" , "to" : new_node_id , "arrows" : "to , middle"})
 
     else:
         results_s1 = []
@@ -186,7 +186,7 @@ def results(query=query):
         # for node in node_list_1st_o:
         for i in range(len(node_list_1st_o)):
             graph_name_list.append(node_list_1st_o[i]["name"])
-            new_node_id = "object_" + str(i+1) + "位"
+            new_node_id = "リンク元_" + str(i+1) + "位"
             new_node_label = node_list_1st_o[i]["name"]
             new_node_title = node_list_1st_o[i]["name"]
             # もし7文字以上なら、7文字までに減らす。余分な 部分をカットする。
@@ -199,10 +199,10 @@ def results(query=query):
             else:
                 graph_nodes.append({"id" : new_node_id , "label" : new_node_label , "title" : new_node_title , "font" : {"size" : 20}, "wikipedia_url" : "https://ja.wikipedia.org/wiki/" + new_node_title , "google_scholar_url" : "https://scholar.google.com/scholar?hl=ja&as_sdt=0%2C5&q=" + new_node_title + "AND"  + query})
                 # もし一つ前のnodeも追加されているのなら矢印のないエッジで、それぞれのnode間も結ぶ
-                # if i > 0 and "object_" + str(i) + "位" in [node["id"] for node in graph_nodes]:
-                #     graph_edges.append({"from" : "object_" + str(i) + "位" , "to" : new_node_id , "arrows" : {"to" : {"enabled" : "false" }}})
+                # if i > 0 and "リンク元_" + str(i) + "位" in [node["id"] for node in graph_nodes]:
+                #     graph_edges.append({"from" : "リンク元_" + str(i) + "位" , "to" : new_node_id , "arrows" : {"to" : {"enabled" : "false" }}})
 
-            graph_edges.append({"from" : new_node_id , "to" : "center" , "arrows" : "to , middle"})
+            graph_edges.append({"from" : new_node_id , "to" : "中央" , "arrows" : "to , middle"})
     else:
         results_o1 = []
         print("error: response_o1.status_code = ", response_o1.status_code)
@@ -212,7 +212,7 @@ def results(query=query):
         parent_node_index = -1
         for node in node_list_1st_s:
             parent_node_index += 1
-            parent_node_id = "subject_" + str(parent_node_index + 1) + "位"
+            parent_node_id = "リンク先_" + str(parent_node_index + 1) + "位"
             parent_node_label = node["name"]
             # parent_node_title = node["name"]
             if len(node["name"]) > 7:
@@ -230,7 +230,7 @@ def results(query=query):
                 # 深度2についても同様に、graph_nodesとgraph_edgesに追加していく
                 for i in range(len(node_list_2nd_s)):
                     graph_name_list.append(node_list_2nd_s[i]["name"])
-                    new_node_id = "subject_" + str(parent_node_index + 1) + "位の" + str(i+1) + "位"
+                    new_node_id = "リンク先_" + str(parent_node_index + 1) + "位の" + str(i+1) + "位"
                     new_node_label = node_list_2nd_s[i]["name"]
                     new_node_title = node_list_2nd_s[i]["name"]
                     if len(node_list_2nd_s[i]["name"]) > 7:
@@ -247,7 +247,7 @@ def results(query=query):
         parent_node_id = -1
         for node in node_list_1st_o:
             parent_node_index += 1
-            parent_node_id = "object_" + str(parent_node_index + 1) + "位"
+            parent_node_id = "リンク元_" + str(parent_node_index + 1) + "位"
             parent_node_label = node["name"]
             # parent_node_title = node["name"]
             if len(node["name"]) > 7:
@@ -265,7 +265,7 @@ def results(query=query):
                 # 深度2についても同様に、graph_nodesとgraph_edgesに追加していく
                 for i in range(len(node_list_2nd_o)):
                     graph_name_list.append(node_list_2nd_o[i]["name"])
-                    new_node_id = "object_" + str(parent_node_index + 1) + "位の" + str(i+1) + "位"
+                    new_node_id = "リンク元_" + str(parent_node_index + 1) + "位の" + str(i+1) + "位"
                     new_node_label = node_list_2nd_o[i]["name"]
                     new_node_title = node_list_2nd_o[i]["name"]
                     if len(node_list_2nd_o[i]["name"]) > 7:
