@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.debug = True
 
 SPARQL_ENDPOINT = "https://ja.dbpedia.org/sparql"
-query = "東京都"
+query = "山陽本線"
 # { id:"center", label: '姫路城', title: 'This is center node' ,font: {size: 50}},
 #             { from: "中央", to: 1, arrows: 'to , middle' },
 # graph_data_list = {"nodes": [ { "id" : "中央" , "label" : "姫路城" , "title" : "This is center node" , "font" : {"size" : 50} }] , "edges" : [ { "from" : "中央" , "to" : 1 , "arrows" : "to , middle" } ]}
@@ -28,7 +28,7 @@ weight_list = [{"weight" : 0.9 , "p" : "http://www.w3.org/1999/02/22-rdf-syntax-
                {"weight" : -0.1 , "p" : "http://www.w3.org/2000/01/rdf-schema#label"},
                {"weight" : -0.1 , "p" : "http://www.w3.org/2004/02/skos/core#prefLabel"},
                {"weight" : 0.1 , "p" : "http://purl.org/dc/terms/subject"},
-            #    {"weight" : 0.1 , "p" : "http://xmlns.com/foaf/0.1/name"},
+               {"weight" : -0.1 , "p" : "http://www.w3.org/2002/07/owl#sameAs"},
             #    {"weight" : 0.1 , "p" : "http://xmlns.com/foaf/0.1/name"},
             #    {"weight" : 0.1 , "p" : "http://xmlns.com/foaf/0.1/name"},
             #    {"weight" : 0.1 , "p" : "http://xmlns.com/foaf/0.1/name"},
@@ -49,10 +49,6 @@ def index(query=query):
 
 
 
-
-
-
-# @app.route('/', methods=['GET', 'POST'])
 @app.route('/results', methods=['GET', 'POST'])
 def results(query=query):
     graph_nodes = []
@@ -107,7 +103,6 @@ def results(query=query):
         if response_s2.status_code != 200:
             print("error: response_s2.status_code = ", response_s2.status_code)
             return []
-        # results = data.get('results', {}).get('bindings', [])
         results = [{"s" : {"value" : trim_node_name(result["s"]["value"])} , "p" : {"value" : result["p"]["value"]} } for result in data.get('results', {}).get('bindings', {})]
         if results == []:
             return results
@@ -133,7 +128,6 @@ def results(query=query):
         if response_o2.status_code != 200:
             print("error: response_o2.status_code = ", response_o2.status_code)
             return []
-        # results = data.get('results', {}).get('bindings', [])
         results = [{"o" : {"value" : trim_node_name(result["o"]["value"])} , "p" : {"value" : result["p"]["value"]} } for result in data.get('results', {}).get('bindings', {})]
         if results == []:
             return results
@@ -145,12 +139,10 @@ def results(query=query):
     
     if response_s1.status_code == 200:
         data = response_s1.json()
-        # results_s1 = data.get('results', {}).get('bindings', [])
         results_s1 = [{"s" : {"value" : trim_node_name(result["s"]["value"])} , "p" : {"value" : result["p"]["value"]} } for result in data.get('results', {}).get('bindings', {})]
         node_list_1st_s = sorted([{"name" : result["s"] , "weight" : sum([1 + sum([(weight["weight"] - 1) for weight in weight_list if weight["p"] == p]) for p in result["p_list"]])} for result in [{"s" : result["s"]["value"] , "p_list" : [line["p"]["value"] for line in results_s1 if line["s"]["value"] == result["s"]["value"]]} for result in results_s1]], key=lambda x:x["weight"], reverse=True)
         if len(node_list_1st_s) > 9:
             node_list_1st_s = node_list_1st_s[:9]
-        # for node in node_list_1st_s:
         for i in range(len(node_list_1st_s)):
             graph_name_list.append(node_list_1st_s[i]["name"])
             new_node_id = "リンク先_" + str(i+1) + "位"
@@ -178,12 +170,10 @@ def results(query=query):
     
     if response_o1.status_code == 200:
         data = response_o1.json()
-        # results_o1 = data.get('results', {}).get('bindings', [])
         results_o1 = [{"o" : {"value" : trim_node_name(result["o"]["value"])} , "p" : {"value" : result["p"]["value"]} } for result in data.get('results', {}).get('bindings', {})]
         node_list_1st_o = sorted([{"name" : result["o"] , "weight" : sum([1 + sum([(weight["weight"] - 1) for weight in weight_list if weight["p"] == p]) for p in result["p_list"]])} for result in [{"o" : result["o"]["value"] , "p_list" : [line["p"]["value"] for line in results_o1 if line["o"]["value"] == result["o"]["value"]]} for result in results_o1]], key=lambda x:x["weight"], reverse=True)
         if len(node_list_1st_o) > 9:
             node_list_1st_o = node_list_1st_o[:9]
-        # for node in node_list_1st_o:
         for i in range(len(node_list_1st_o)):
             graph_name_list.append(node_list_1st_o[i]["name"])
             new_node_id = "リンク元_" + str(i+1) + "位"
@@ -223,11 +213,9 @@ def results(query=query):
             results_s2 = get_results_s2(node["name"],graph_name_list)
             if results_s2 != []:
                 node_list_2nd_s = sorted([{"name" : result["s"] , "weight" : sum([1 + sum([(weight["weight"] - 1) for weight in weight_list if weight["p"] == p]) for p in result["p_list"]])} for result in [{"s" : result["s"]["value"] , "p_list" : [line["p"]["value"] for line in results_s1 if line["s"]["value"] == result["s"]["value"]]} for result in results_s2]], key=lambda x:x["weight"], reverse=True)
-                if len(node_list_2nd_s) > 1:
-                    node_list_2nd_s = node_list_2nd_s[:1]
-                # for node in node_list_2nd_s:
-                #     graph_name_list.append(node["name"])
-                # 深度2についても同様に、graph_nodesとgraph_edgesに追加していく
+                # nodeCountDepth2 = len(node_list_2nd_s)
+                if len(node_list_2nd_s) > 4:
+                    node_list_2nd_s = node_list_2nd_s[:4]
                 for i in range(len(node_list_2nd_s)):
                     graph_name_list.append(node_list_2nd_s[i]["name"])
                     new_node_id = "リンク先_" + str(parent_node_index + 1) + "位の" + str(i+1) + "位"
@@ -258,11 +246,10 @@ def results(query=query):
             results_o2 = get_results_o2(node["name"],graph_name_list)
             if results_o2 != []:
                 node_list_2nd_o = sorted([{"name" : result["o"] , "weight" : sum([1 + sum([(weight["weight"] - 1) for weight in weight_list if weight["p"] == p]) for p in result["p_list"]])} for result in [{"o" : result["o"]["value"] , "p_list" : [line["p"]["value"] for line in results_o1 if line["o"]["value"] == result["o"]["value"]]} for result in results_o2]], key=lambda x:x["weight"], reverse=True)
-                if len(node_list_2nd_o) > 1:
-                    node_list_2nd_o = node_list_2nd_o[:1]
-                # for node in node_list_2nd_o:
-                #     graph_name_list.append(node["name"])
-                # 深度2についても同様に、graph_nodesとgraph_edgesに追加していく
+                # nodeCountDepth2 = len(node_list_2nd_o)
+                if len(node_list_2nd_o) > 4:
+                    node_list_2nd_o = node_list_2nd_o[:4]
+
                 for i in range(len(node_list_2nd_o)):
                     graph_name_list.append(node_list_2nd_o[i]["name"])
                     new_node_id = "リンク元_" + str(parent_node_index + 1) + "位の" + str(i+1) + "位"

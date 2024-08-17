@@ -328,9 +328,9 @@
             <div class="accordion-content">
                 <img src="../static/first_network_diagram.png" alt="first_network_diagram"
                     style="width: 100%; padding-top: 16px;">
-                <p>Wikipediaのページには、他のページへのリンクがあります。これがグラフ中のノードとノードを結ぶ矢印に対応しています。<span
-                        style="font-weight: bold;">リンク元のページからリンク先のページの方向</span>に矢印が向いています。
-                </p>
+                <p>Wikipediaのページには、他のページへのリンクがあります。これがグラフ中のノードとノードを結ぶ矢印に対応しています。</p>
+                <p><span style="font-weight: bold;">リンク元のページからリンク先のページの方向</span>に矢印が向いています。</p>
+                <p>矢印が複数重なっているノードは、厳密には似ている単語を１つのノードとして表示するアルゴリズムの結果ですが、基本的に単語同士の結びつきが深いことを示しています。</p>
             </div>
         </div>
         <div class="accordion-item">
@@ -428,56 +428,48 @@
             number_of_nodesDepth1_subject = 0;
             number_of_nodesDepth1_object = 0;
             // 2段階目のノードの数は、1段階目のノードの数それぞれについて分けてカウントする
-            number_of_nodesDepth2_subject = Array(100).fill(0);
-            number_of_nodesDepth2_object = Array(100).fill(0);
+            // number_of_nodesDepth2_subject = Array(100).fill(0);
+            // number_of_nodesDepth2_object = Array(100).fill(0);
             const output_data = {
                 nodes: [],
                 edges: []
             };
 
-            input_data.nodes.forEach(async function (node) {
+            await input_data.nodes.forEach(async function (node) {
                 if (node.id === '中央') {
                     output_data.nodes.push(node);
                 }
                 // ノードの大きさを変更する
-                if (node.id !== '中央'){
+                if (node.id !== '中央') {
                     node.font.size = nodeSize;
                 }
                 if (node.id.includes('リンク先') && !node.id.includes('位の')) {
                     if (number_of_nodesDepth1_object < nodeCountsDepth1) {
-                        number_of_nodesDepth1_object += 1;
-                        output_data.nodes.push(node);
+                        // number_of_nodesDepth1_object += 1;
+                        await number_of_nodesDepth1_object++;
+                        await output_data.nodes.push(node);
                     }
                 } else if (node.id.includes('リンク元') && !node.id.includes('位の')) {
                     if (number_of_nodesDepth1_subject < nodeCountsDepth1) {
-                        number_of_nodesDepth1_subject += 1;
-                        output_data.nodes.push(node);
-                    }
-                }
-            });
-            // ノードの選択(2段階目)
-            input_data.nodes.forEach(async function (node) {
-                if (node.id.includes('リンク先') && node.id.includes('位の')) {
-                    // 1段階目が存在することを確認
-                    if (output_data.nodes.find(exist_node => exist_node.id.split('位')[0] === node.id.split('位')[0]) && number_of_nodesDepth2_object[parseInt(node.id.split('_')[1].split('位')[0])] < nodeCountsDepth2) {
-                            number_of_nodesDepth2_object[parseInt(node.id.split('_')[1].split('位')[0])] += 1;
-                            output_data.nodes.push(node);
-                    }
-                }else if (node.id.includes('リンク元') && node.id.includes('位の')) {
-                    // 1段階目が存在することを確認
-                    if (output_data.nodes.find(exist_node => exist_node.id.split('位')[0] === node.id.split('位')[0]) && number_of_nodesDepth2_subject[parseInt(node.id.split('_')[1].split('位')[0])] < nodeCountsDepth2) {
-                            number_of_nodesDepth2_subject[parseInt(node.id.split('_')[1].split('位')[0])] += 1;
-                            output_data.nodes.push(node);
+                        // number_of_nodesDepth1_subject += 1;
+                        await number_of_nodesDepth1_subject++;
+                        await output_data.nodes.push(node);
                     }
                 }
             });
 
-            input_data.edges.forEach(function (edge) {
-                console.log(edge);
-                // リンク先・リンク元のノードが存在する場合のみエッジを追加
-                if (edge && output_data.nodes.find(node => node.id === edge.from) && output_data.nodes.find(node => node.id === edge.to)) {
-                    // console.log(edge);
+            // from/toのどちらかにリンク先・リンク元のノードが存在する場合のみエッジを追加
+            await input_data.edges.forEach(function (edge) {
+                if (output_data.nodes.find(node => node.id === edge.from) || output_data.nodes.find(node => node.id === edge.to)) {
                     output_data.edges.push(edge);
+                }
+            });
+            // ノードの選択(2段階目)：edgeのfrom/toのどちらかに含まれている場合のみノードを追加
+            await input_data.nodes.forEach(function (node) {
+                if (node.id.includes('リンク') && node.id.includes('位の')) {
+                    if (node.id.split('位の')[1].split('位')[0] <= nodeCountsDepth2 && (output_data.edges.find(edge => edge.from === node.id) || output_data.edges.find(edge => edge.to === node.id))) {
+                        output_data.nodes.push(node);
+                    }
                 }
             });
             var options = {
@@ -526,7 +518,7 @@
                     document.getElementById('node-details').innerHTML = '<p>気になる単語をクリックしてみてください。ここに単語の詳細について表示されます</p>';
                 }
             });
-            
+
 
             // graph_nodes :[{'id': 'リンク先_1位', 'label': '2022年の阪...', 'title': '2022年の阪神タイガース', 'font': {'size': 50}}, {'id': 'リンク先_2位', 'label': 'かとうれいこ', 'title': 'かとうれいこ', 'font': {'size': 50}}, {'id': 'リンク先_3位', 'label': '原田伸郎', 'title': '原田伸郎', 'font': {'size': 50}}, {'id': 'リンク先_4位', 'label': '向井寛', 'title': '向井寛', 'font': {'size': 50}}, {'id': 'リンク先_5位', 'label': '田中次紀', 'title': '田中次紀', 'font': {'size': 50}}, {'id': 'リンク先_6位', 'label': 'ティーチングプ...', 'title': 'ティーチングプロ', 'font': {'size': 50}}, {'id': 'リンク先_7位', 'label': 'レッスンプロ', 'title': 'レッスンプロ', 'font': {'size': 50}}, {'id': 'リンク元_1位', 'label': 'ゴルフ', 'title': 'ゴルフ', 'font': {'size': 50}}, {'id': 'リンク元_2位', 'label': 'ゴルファー', 'title': 'ゴルファー', 'font': {'size': 50}}, {'id': 'リンク元_3位', 'label': 'プロフェッショ...', 'title': 'プロフェッショナル', 'font': {'size': 50}}]
             // alert("graph_nodes_replace() :" + graph_nodes.replace(/'/g, '"'));
