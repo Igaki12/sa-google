@@ -2,11 +2,80 @@ import os
 import re
 # from tkinter import SE
 # from urllib import response
-from flask import Flask, render_template, request , redirect
+from flask import Flask, render_template, request, redirect, url_for
 import requests
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.debug = True
+
+# ランダムな24バイトのsecret_keyを生成
+app.secret_key = os.urandom(24)
+
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+
+
+# User model
+class User(UserMixin):
+    def __init__(self, id, username , password):
+        self.id = id
+        self.username = username
+        self.password = password
+
+# Simple in-memory user store
+# In a real application, you would use a database
+users = {
+    1: User(1, "user1", "pass"),
+    2: User(2, "user2", "pass"),
+    3: User(3, "", "tlPd8v"),
+}
+#パスワードのハッシュ化
+for user in users.values():
+    user.password = generate_password_hash(user.password)
+
+@login_manager.user_loader
+def load_user(user_id):
+    # Flask-Login uses this callback to reload the user object from the user ID stored in the session
+    return users.get(int(user_id))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    msg = ""
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        # # 入力されたパスワードが登録されているパスワードハッシュと一致するかを確認
+        # user = next((u for u in users.values() if u.username == username and u.password == password), None)
+        user = next((u for u in users.values() if u.username == username and check_password_hash(u.password, password)), None)
+
+        if user:
+            login_user(user)
+            print("login success")
+            return redirect(url_for('index'))
+        else:
+            msg = "ユーザ名またはパスワードが違います"
+
+    return render_template('login.html', msg=msg)
+    # return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/protected')
+@login_required
+def protected():
+    return f'Hello, {current_user.username}! This is a protected page. <a href="/logout">Logout</a>'
+
+
+
 
 SPARQL_ENDPOINT = "https://ja.dbpedia.org/sparql"
 query = "山陽本線"
@@ -36,12 +105,13 @@ weight_list = [{"weight" : 0.9 , "p" : "http://www.w3.org/1999/02/22-rdf-syntax-
             #    {"weight" : 0.1 , "p" : "http://xmlns.com/foaf/0.1/name"},
             ]
 @app.route('/', methods=['GET' , 'POST'])
+@login_required
 def index(query=query):
     if request.method == 'POST':
         # input check
         while request.form['query'] == "" or len(request.form['query']) > 20 or re.compile(r"[!-/:-@[-`{-~]").search(request.form['query']):
             print("error: invalid input")
-            return redirect('/')
+            return redirect('/top')
         query = request.form['query']
 
         return redirect('/results')
@@ -50,6 +120,7 @@ def index(query=query):
 
 
 @app.route('/results', methods=['GET', 'POST'])
+@login_required
 def results(query=query):
     graph_nodes = []
     graph_edges = []
