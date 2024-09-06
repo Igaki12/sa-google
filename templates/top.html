@@ -201,12 +201,19 @@
             margin: 0;
             padding-top: 2px;
             padding-bottom: 2px;
+            padding-right: 10px;
+            padding-left: 10px;
             left: 0;
             bottom: 0;
-            width: 100%;
+            /* width: 100%; */
             background-color: #333;
             color: white;
             text-align: center;
+            display: flex;
+            justify-content: space-between;
+        }
+        .footer a {
+            color: white;
         }
 
         @keyframes spin {
@@ -321,7 +328,7 @@
 
     <!-- 一般的なフッター (C)2024- Happyman と文字だけ -->
     <footer class="footer">
-        <p>&copy; 2024 - Happyman Igatatsu</p>
+        <p>&copy; 2024 PBLアシスタント</p> <p><a href="{{ url_for('logout') }}" style="text-decoration: underline;">ログアウト</a></p>
     </footer>
 
 
