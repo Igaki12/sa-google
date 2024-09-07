@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <title>User Database</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        h1 {
+            text-align: center;
+        }
+        p {
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            margin: 10px auto;
+        }
+        input[type="submit"] {
+            /* width: 120px; */
+            margin: 0 auto;
+            padding-right: 10px;
+            padding-left: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            background-color: #B22222;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: small;
+        }
+    </style>
+</head>
+<body>
+    <h1>全ユーザー情報</h1>
+    <p>ユーザー名：masterのアカウントでログインした場合のみ、この画面が表示されます。</p>
+    <p>PBLアシスタントをプレイする場合は、ユーザー名：masterのアカウント以外でログインしてください。</p>
+    <!-- /loginにリダイレクト -->
+    <form action="/login" method="get">
+        <input type="submit" value="ログイン画面へ戻る">
+    </form>
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- sqlalchemyから取得 -->
+             {% for user in users %}
+             <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <!-- このユーザーを削除　formボタン -->
+                <td>
+                    {% if user.username != 'master' %}
+                    <form action="/delete" method="post">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <input type="submit" value=" 削除 ">
+                    </form>
+                    {% else %}
+                    <p>管理者アカウント(削除不可)</p>
+                    {% endif %}
+                </td>
+             </tr>
+             {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+
+    </script>
+</body>
+</html>

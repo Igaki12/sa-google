@@ -6,9 +6,12 @@ from flask import Flask, render_template, request, redirect, url_for
 import requests
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.debug = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.db'
+db = SQLAlchemy(app)
 
 # ランダムな24バイトのsecret_keyを生成
 app.secret_key = os.urandom(24)
@@ -21,27 +24,90 @@ login_manager.login_view = 'login'
 
 
 # User model
-class User(UserMixin):
-    def __init__(self, id, username , password):
-        self.id = id
-        self.username = username
-        self.password = password
+# class User(UserMixin):
+#     def __init__(self, id, username , password):
+#         self.id = id
+#         self.username = username
+#         self.password = password
+# sqlalchemyのモデルを作成
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), nullable=False, unique=True)
+    password = db.Column(db.String(100), nullable=False)
+
+    @property
+    def is_active(self):
+        # ここに無効化の条件を追加する
+        return True
+    
+    def get_id(self):
+        return str(self.id)
+
+# 現在の登録データをdbから取得
+def get_all_users():
+    return User.query.all()
+
+# Create a new user
+def add_user(username, password):
+    # Create a new User object
+    new_user = User(username=username, password=password)
+    
+    # Add the new user to the database
+    db.session.add(new_user)
+    db.session.commit()
+    
+    # Return the newly created user
+    return new_user
+
 
 # Simple in-memory user store
 # In a real application, you would use a database
-users = {
-    1: User(1, "user1", "pass"),
-    2: User(2, "user2", "pass"),
-    3: User(3, "", "tlPd8v"),
-}
-#パスワードのハッシュ化
-for user in users.values():
-    user.password = generate_password_hash(user.password)
+# users = {
+#     1: User(1, "user1", "pass"),
+#     2: User(2, "user2", "pass"),
+#     3: User(3, "", "tlPd8v"),
+# }
+
+# #パスワードのハッシュ化
+# for user in users.values():
+#     user.password = generate_password_hash(user.password)
+
 
 @login_manager.user_loader
 def load_user(user_id):
     # Flask-Login uses this callback to reload the user object from the user ID stored in the session
-    return users.get(int(user_id))
+    return User.query.get(int(user_id))
+    # return users.get(int(user_id))
+
+# データベース情報を表示
+@app.route('/profile' , methods=['GET'])
+@login_required
+def profile():
+    return render_template('profile.html', users=get_all_users())
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    msg = ""
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        # 入力されたユーザ名がすでに登録されているかを確認
+        if next((u for u in get_all_users() if u.username == username), None):
+            msg = "このユーザー名はすでに登録されています(重複しないユーザー名を入力してください)"
+        else:
+            add_user(username, generate_password_hash(password))
+            msg = "登録が完了しました： " + username
+    return render_template('signup.html', msg=msg)
+
+# ユーザーを削除
+@app.route('/delete', methods=['POST'])
+@login_required
+def delete():
+    user_id = request.form['user_id']
+    user = User.query.filter_by(id=user_id).first()
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for('profile'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -49,19 +115,19 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        # # 入力されたパスワードが登録されているパスワードハッシュと一致するかを確認
-        # user = next((u for u in users.values() if u.username == username and u.password == password), None)
-        user = next((u for u in users.values() if u.username == username and check_password_hash(u.password, password)), None)
-
+         # 入力されたパスワードが登録されているパスワードハッシュと一致するかを確認
+        user = next((u for u in get_all_users() if u.username == username and check_password_hash(u.password, password)), None)
+        # 管理者ユーザーの場合は、管理者ページにリダイレクト
+        if user and user.username == "master":
+            login_user(user)
+            return redirect(url_for('profile'))
+        # ユーザー名とパスワードが一致した場合は、ログイン
         if user:
             login_user(user)
-            print("login success")
             return redirect(url_for('index'))
         else:
-            msg = "ユーザ名またはパスワードが違います"
-
+            msg = "ユーザー名またはパスワードが間違っています"
     return render_template('login.html', msg=msg)
-    # return render_template('login.html')
 
 @app.route('/logout')
 @login_required
@@ -347,40 +413,9 @@ def results(query=query):
     
 
 if __name__ == '__main__':
+    # Create all database tables
+    with app.app_context():
+        db.create_all()
     server_port = os.environ.get('PORT', '8080')
     app.run(debug=False, port=server_port, host='0.0.0.0')
 
-
-
-
-
-
-
-"""
-A sample Hello World server.
-"""
-# import os
-
-# from flask import Flask, render_template
-
-# # pylint: disable=C0103
-# app = Flask(__name__)
-
-
-# @app.route('/')
-# def hello():
-#     """Return a friendly HTTP greeting."""
-#     message = "It's running!"
-
-#     """Get Cloud Run environment variables."""
-#     service = os.environ.get('K_SERVICE', 'Unknown service')
-#     revision = os.environ.get('K_REVISION', 'Unknown revision')
-
-#     return render_template('index.html',
-#         message=message,
-#         Service=service,
-#         Revision=revision)
-
-# if __name__ == '__main__':
-#     server_port = os.environ.get('PORT', '8080')
-#     app.run(debug=False, port=server_port, host='0.0.0.0')
