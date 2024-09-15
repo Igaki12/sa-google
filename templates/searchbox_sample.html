@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eye-catching Search Box</title>
+  <style>
+    .search-box {
+      width: 400px;
+      padding: 15px;
+      border: none;
+      border-radius: 50px;
+      font-size: 18px;
+      outline: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      background: linear-gradient(to right, #ff7e5f, #feb47b);
+      color: white;
+      transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .search-box::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .search-box:focus {
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(to right, #ff6a5f, #fd935b);
+    }
+
+    .search-container {
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .search-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 30px;
+      background-color: #ff7e5f;
+      color: white;
+      font-size: 16px;
+      margin-left: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .search-btn:hover {
+      background-color: #feb47b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="search-container">
+    <input type="text" class="search-box" placeholder="検索...">
+    <button class="search-btn">検索</button>
+  </div>
+
+</body>
+</html>
